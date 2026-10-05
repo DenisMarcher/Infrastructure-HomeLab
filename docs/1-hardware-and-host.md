@@ -29,7 +29,10 @@ After installation, the host clock was incorrect. I corrected the time configura
 
 The screenshot below shows the host after the initial setup, with the hostname, ESXi version, hardware information, management IP, and corrected host time visible in the Host Client.
 
-![ESXi Host Client host summary](screenshot/esxi-host-summary.png)
+![ESXi Host Client host summary](infrastructure-homelab/docs
+/
+1-hardware-and-host.md
+)
 
 *ESXi Host Client after the initial host setup.*
 
