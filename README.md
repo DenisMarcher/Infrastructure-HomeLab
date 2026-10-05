@@ -1,8 +1,8 @@
 # Infrastructure Homelab
 
-This repository documents a staged infrastructure homelab built on a dedicated VMware ESXi host.
+This repository contains my infrastructure homelab built on a dedicated VMware ESXi host.
 
-The project is being developed incrementally. Completed stages are documented only after they have been configured and validated in the lab.
+I am adding each part of the lab as I build and test it.
 
 ## Current Environment
 
@@ -15,15 +15,13 @@ The project is being developed incrementally. Completed stages are documented on
 
 ## Current Status
 
-- [x] Physical ESXi host prepared
-- [x] ESXi installed
-- [x] ESXi Host Client accessible from the main PC
-- [ ] ESXi lab networking
-- [ ] Core virtual firewall
-- [ ] Active Directory and DNS
-- [ ] DHCP and Windows client
-- [ ] Linux and Docker
-- [ ] Monitoring
-- [ ] Backup and restore testing
-- [ ] Vendor firewall lab
-- [ ] Hybrid Microsoft 365 stage
+- ✅ [ESXi installed and accessible through the Host Client over local network](docs/1-hardware-and-host.md)
+- ⬜ ESXi networking
+- ⬜ Core virtual firewall
+- ⬜ Active Directory and DNS
+- ⬜ DHCP and Windows client
+- ⬜ Linux and Docker
+- ⬜ Monitoring
+- ⬜ Backup and restore testing
+- ⬜ Vendor firewall lab
+- ⬜ Hybrid Microsoft 365 stage
