@@ -15,14 +15,14 @@ The project is being developed incrementally. Completed stages are documented on
 
 ## Current Status
 
-✅ Physical ESXi host prepared 
-✅ ESXi installed and accessible through the host client over the Local network
-- [ ] ESXi networking part
-- [ ] Core virtual firewall
-- [ ] Active Directory and DNS
-- [ ] DHCP and Windows client
-- [ ] Linux and Docker
-- [ ] Monitoring
-- [ ] Backup and restore testing
-- [ ] Vendor firewall lab
-- [ ] Hybrid Microsoft 365 stage
+- ✅ Physical ESXi host prepared
+- ✅ ESXi installed and accessible through the Host Client over the local network
+- ⬜ ESXi networking
+- ⬜ Core virtual firewall
+- ⬜ Active Directory and DNS
+- ⬜ DHCP and Windows client
+- ⬜ Linux and Docker
+- ⬜ Monitoring
+- ⬜ Backup and restore testing
+- ⬜ Vendor firewall lab
+- ⬜ Hybrid Microsoft 365 stage
