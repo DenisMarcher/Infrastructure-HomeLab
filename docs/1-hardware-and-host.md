@@ -25,7 +25,7 @@ Installed version:
 
 I manage the host from my main PC through the ESXi Host Client.
 
-After installation, the host clock was incorrect. I corrected the time configuration before moving on by using `time.cloudflare.com` NTP Server. Services such as Active Directory and logging depend on accurate time.
+After installation, the host clock was incorrect. I corrected the host time using `time.cloudflare.com` as the NTP server before moving on. Services such as Active Directory and logging depend on accurate time.
 
 The screenshot below shows the host after the initial setup, with the hostname, ESXi version, hardware information, management IP, and corrected host time.
 
