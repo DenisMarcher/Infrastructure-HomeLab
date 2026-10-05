@@ -15,8 +15,7 @@ The project is being developed incrementally. Completed stages are documented on
 
 ## Current Status
 
-- ✅ Physical ESXi host prepared
-- ✅ ESXi installed and accessible through the Host Client over the local network
+- ✅ [ESXi installed and accessible through the Host Client over the local network](docs/1-hardware-and-host.md)
 - ⬜ ESXi networking
 - ⬜ Core virtual firewall
 - ⬜ Active Directory and DNS
