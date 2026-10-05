@@ -1,8 +1,8 @@
 # Infrastructure Homelab
 
-This repository documents a staged infrastructure homelab built on a dedicated VMware ESXi host.
+This repository contains my infrastructure homelab built on a dedicated VMware ESXi host.
 
-The project is being developed incrementally. Completed stages are documented only after they have been configured and validated in the lab.
+I am adding each part of the lab as I build and test it.
 
 ## Current Environment
 
