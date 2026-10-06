@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">ESXi network layout</title>
+  <desc id="desc">ESXI01.denyslab.com uses vSwitch0 for management and future firewall WAN connectivity, and an isolated vSwitch-LAB with SERVERS VLAN 20, CLIENTS VLAN 30, and OPS VLAN 40.</desc>
+  <style>
+    text { font-family: Inter, "Segoe UI", Arial, sans-serif; fill: #0f172a; }
+    .host-title { font-size: 34px; font-weight: 700; }
+    .host-subtitle { font-size: 20px; fill: #64748b; }
+    .panel-title { font-size: 28px; font-weight: 700; }
+    .panel-note { font-size: 18px; fill: #64748b; }
+    .panel-note-warn { font-size: 18px; fill: #b91c1c; font-weight: 600; }
+    .card-title { font-size: 22px; font-weight: 700; }
+    .card-subtitle { font-size: 18px; fill: #475569; }
+    .small-label { font-size: 18px; font-weight: 600; fill: #334155; }
+    .connector { stroke: #475569; stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .connector-blue { stroke: #2563eb; stroke-width: 5; fill: none; stroke-linecap: round; }
+    .switch-icon { fill: #e2e8f0; stroke: #64748b; stroke-width: 3; }
+    .port { fill: #475569; }
+  </style>
+  <rect width="1600" height="900" fill="#ffffff"/>
+  <rect x="150" y="40" width="560" height="135" rx="20" fill="#eff6ff" stroke="#60a5fa" stroke-width="3"/>
+  <g transform="translate(185 70)">
+    <rect x="0" y="35" width="72" height="38" rx="9" fill="#dbeafe" stroke="#3b82f6" stroke-width="3"/>
+    <circle cx="18" cy="54" r="4" fill="#2563eb"/>
+    <circle cx="36" cy="54" r="4" fill="#2563eb"/>
+    <circle cx="54" cy="54" r="4" fill="#2563eb"/>
+    <path d="M20 25 Q36 10 52 25" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/>
+    <path d="M28 33 Q36 26 44 33" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <text x="300" y="95" font-size="31" font-weight="700">Home Network</text>
+  <text x="300" y="132" font-size="24" fill="#475569">10.100.102.0/24</text>
+
+  <rect x="70" y="235" width="1460" height="610" rx="24" fill="#f8fafc" stroke="#64748b" stroke-width="3"/>
+
+  <path class="connector-blue" d="M430 175 L430 335"/>
+  <rect x="367" y="190" width="126" height="38" rx="19" fill="#ffffff" stroke="#bfdbfe" stroke-width="2"/>
+  <text x="430" y="216" text-anchor="middle" class="small-label">vmnic0</text>
+  <text x="800" y="282" text-anchor="middle" class="host-title">ESXI01.denyslab.com</text>
+  <text x="800" y="314" text-anchor="middle" class="host-subtitle">VMware ESXi 8.0 Update 3</text>
+
+  <rect x="115" y="335" width="625" height="455" rx="20" fill="#f8fbff" stroke="#bfdbfe" stroke-width="3"/>
+  <g transform="translate(320 372)">
+    <rect class="switch-icon" x="0" y="0" width="84" height="52" rx="10"/>
+    <rect class="port" x="14" y="20" width="10" height="10" rx="2"/>
+    <rect class="port" x="30" y="20" width="10" height="10" rx="2"/>
+    <rect class="port" x="46" y="20" width="10" height="10" rx="2"/>
+    <rect class="port" x="62" y="20" width="10" height="10" rx="2"/>
+  </g>
+  <text x="427" y="405" class="panel-title">vSwitch0</text>
+  <text x="427" y="435" class="panel-note">Physical uplink: vmnic0</text>
+
+  <path class="connector" d="M427 444 L427 490 L260 490 L260 535"/>
+  <path class="connector" d="M427 490 L595 490 L595 535"/>
+
+  <rect x="150" y="535" width="220" height="175" rx="16" fill="#eff6ff" stroke="#93c5fd" stroke-width="3"/>
+  <circle cx="260" cy="578" r="20" fill="#dbeafe" stroke="#3b82f6" stroke-width="3"/>
+  <path d="M248 578 H272 M260 566 V590" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+  <text x="260" y="625" text-anchor="middle" class="card-title">Management Network</text>
+  <text x="260" y="660" text-anchor="middle" class="card-subtitle">10.100.102.69</text>
+  <text x="260" y="688" text-anchor="middle" class="card-subtitle">ESXi management</text>
+
+  <rect x="485" y="535" width="220" height="175" rx="16" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="3"/>
+  <rect x="575" y="558" width="40" height="32" rx="5" fill="#e2e8f0" stroke="#94a3b8" stroke-width="3"/>
+  <path d="M595 590 V600 M580 600 H610" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+  <text x="595" y="625" text-anchor="middle" class="card-title">VM Network</text>
+  <text x="595" y="660" text-anchor="middle" class="card-subtitle">Reserved for</text>
+  <text x="595" y="688" text-anchor="middle" class="card-subtitle">firewall WAN</text>
+
+  <rect x="860" y="335" width="625" height="455" rx="20" fill="#f8fbff" stroke="#bfdbfe" stroke-width="3"/>
+  <g transform="translate(1035 372)">
+    <rect class="switch-icon" x="0" y="0" width="84" height="52" rx="10"/>
+    <rect class="port" x="14" y="20" width="10" height="10" rx="2"/>
+    <rect class="port" x="30" y="20" width="10" height="10" rx="2"/>
+    <rect class="port" x="46" y="20" width="10" height="10" rx="2"/>
+    <rect class="port" x="62" y="20" width="10" height="10" rx="2"/>
+  </g>
+  <text x="1142" y="405" class="panel-title">vSwitch-LAB</text>
+  <text x="1142" y="435" class="panel-note-warn">No physical uplink</text>
+
+  <path class="connector" d="M1142 444 L1142 490 L960 490 L960 535"/>
+  <path class="connector" d="M1142 490 L1172 490 L1172 535"/>
+  <path class="connector" d="M1142 490 L1384 490 L1384 535"/>
+
+  <rect x="885" y="535" width="150" height="175" rx="16" fill="#eff6ff" stroke="#60a5fa" stroke-width="3"/>
+  <rect x="935" y="561" width="50" height="10" rx="3" fill="#60a5fa"/>
+  <rect x="935" y="578" width="50" height="10" rx="3" fill="#60a5fa"/>
+  <rect x="935" y="595" width="50" height="10" rx="3" fill="#60a5fa"/>
+  <text x="960" y="638" text-anchor="middle" class="card-title">SERVERS</text>
+  <text x="960" y="675" text-anchor="middle" class="card-subtitle">VLAN 20</text>
+
+  <rect x="1097" y="535" width="150" height="175" rx="16" fill="#f0fdf4" stroke="#86efac" stroke-width="3"/>
+  <rect x="1147" y="560" width="50" height="36" rx="5" fill="#dcfce7" stroke="#22c55e" stroke-width="3"/>
+  <path d="M1172 596 V606 M1154 606 H1190" stroke="#22c55e" stroke-width="3" stroke-linecap="round"/>
+  <text x="1172" y="638" text-anchor="middle" class="card-title">CLIENTS</text>
+  <text x="1172" y="675" text-anchor="middle" class="card-subtitle">VLAN 30</text>
+
+  <rect x="1309" y="535" width="150" height="175" rx="16" fill="#fff7ed" stroke="#fdba74" stroke-width="3"/>
+  <circle cx="1384" cy="582" r="22" fill="#ffedd5" stroke="#f97316" stroke-width="3"/>
+  <path d="M1384 568 V596 M1370 582 H1398" stroke="#f97316" stroke-width="3" stroke-linecap="round"/>
+  <text x="1384" y="638" text-anchor="middle" class="card-title">OPS</text>
+  <text x="1384" y="675" text-anchor="middle" class="card-subtitle">VLAN 40</text>
+
+  <text x="428" y="753" text-anchor="middle" class="panel-note">Management remains independent of the virtual firewall</text>
+  <text x="1172" y="753" text-anchor="middle" class="panel-note">Internal lab segments only</text>
+</svg>
