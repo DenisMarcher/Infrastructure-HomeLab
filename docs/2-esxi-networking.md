@@ -20,6 +20,8 @@ No VMkernel interface is attached to `vSwitch-LAB`, so ESXi management remains o
 
 ## ESXi Host Client
 
-![vSwitch-LAB configuration in ESXi Host Client](../screenshots/2-esxi-vswitch-lab-proof.jpg)
+<p align="center">
+  <img src="../screenshots/2-esxi-vswitch-lab-proof.png" alt="vSwitch-LAB configuration in ESXi Host Client" width="100%">
+</p>
 
 *ESXi Host Client showing the three lab port groups on `vSwitch-LAB` and no physical adapter attached.*
