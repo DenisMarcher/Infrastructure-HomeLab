@@ -1,12 +1,12 @@
 # ESXi Networking
 
-Before deploying any virtual machines, I separated ESXi management from the internal lab networks.
+I built the ESXi network foundation before deploying any virtual machines.
 
-![ESXi network layout](../diagrams/2-esxi-network-layout.svg)
+![Current ESXi network layout](../diagrams/2-esxi-network-layout.svg)
 
-`vSwitch0` remains connected to the home network through `vmnic0`. It carries the ESXi management network and the default `VM Network`, which will later be used for the firewall WAN interface.
+`vSwitch0` stays connected to the home LAN through `vmnic0`. ESXi management uses `vmk0` with management IP `10.100.102.69`. The default `VM Network` is currently unused and is reserved for the future firewall WAN side.
 
-`vSwitch-LAB` has no physical uplink. It is used only for the internal lab networks that will sit behind the virtual firewall.
+`vSwitch-LAB` has no physical uplink. It contains the three internal port groups that will sit behind the virtual firewall.
 
 ## Internal networks
 
@@ -16,8 +16,12 @@ Before deploying any virtual machines, I separated ESXi management from the inte
 | `CLIENTS` | 30 | `10.77.30.0/24` | Windows client systems |
 | `OPS` | 40 | `10.77.40.0/24` | Monitoring, backup, and administrative services |
 
-The subnets are part of the addressing plan for the guest systems and firewall interfaces. No guest IP addresses are configured yet because no virtual machines have been deployed.
+These subnets are part of the addressing plan only. No guest IP addresses or lab gateway interfaces exist yet because the firewall and guest VMs have not been deployed.
 
-ESXi management remains on `vSwitch0`, so the host stays reachable even if the virtual firewall is stopped or misconfigured.
+No VMkernel interface was added to `vSwitch-LAB`, so ESXi management remains independent from the virtual firewall.
 
-At this stage, the ESXi network foundation is in place. Routing and firewall policy will be added with Sophos Firewall Home in the next stage.
+## ESXi configuration
+
+![vSwitch-LAB in ESXi Host Client](../screenshots/2-esxi-vswitch-lab-proof.jpg)
+
+The Host Client view shows `SERVERS` on VLAN 20, `CLIENTS` on VLAN 30, and `OPS` on VLAN 40 attached to `vSwitch-LAB`. It also shows that the switch has no physical adapter attached.
