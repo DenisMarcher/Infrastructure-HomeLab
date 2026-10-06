@@ -11,12 +11,13 @@ I am adding each part of the lab as I build and test it.
 - 16 GB RAM
 - Dedicated physical ESXi host
 - ESXi management network on the home LAN
+- Internal lab networks isolated on a separate ESXi virtual switch
 - Additional Windows, Linux, firewall, monitoring, and backup components will be added in later stages
 
 ## Current Status
 
 - ✅ [ESXi installed and accessible through the Host Client over local network](docs/1-hardware-and-host.md)
-- ⬜ ESXi networking
+- ✅ [ESXi network foundation](docs/2-esxi-networking.md)
 - ⬜ Core virtual firewall
 - ⬜ Active Directory and DNS
 - ⬜ DHCP and Windows client
