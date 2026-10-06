@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="850" viewBox="0 0 1600 850" role="img" aria-labelledby="title desc">
   <title id="title">Current ESXi network foundation</title>
-  <desc id="desc">ESXI01.denyslab.com uses vSwitch0 for ESXi management on the home network and an isolated vSwitch-LAB with SERVERS VLAN 20, CLIENTS VLAN 30, and OPS VLAN 40. No guest virtual machines or virtual firewall are deployed.</desc>
+  <desc id="desc">ESXI01.denyslab.com uses vSwitch0 for ESXi management on the home LAN and an isolated vSwitch-LAB with SERVERS VLAN 20, CLIENTS VLAN 30, and OPS VLAN 40. No guest virtual machines or virtual firewall are deployed.</desc>
   <style>
     text { font-family: Inter, "Segoe UI", Arial, sans-serif; fill: #0f172a; }
     .page-title { font-size: 34px; font-weight: 700; }
@@ -17,7 +17,7 @@
   <rect width="1600" height="850" fill="#ffffff"/>
 
   <text x="800" y="50" text-anchor="middle" class="page-title">Current ESXi Network Foundation</text>
-  <text x="800" y="80" text-anchor="middle" class="small">Current state — no guest VMs or virtual firewall deployed</text>
+  <text x="800" y="80" text-anchor="middle" class="small">Current state — no guest VMs or virtual firewall</text>
 
   <rect x="165" y="110" width="500" height="120" rx="18" fill="#eff6ff" stroke="#60a5fa" stroke-width="3"/>
   <g transform="translate(205 142)">
@@ -27,7 +27,7 @@
     <circle cx="60" cy="41" r="5" fill="#2563eb"/>
     <path d="M18 10 Q40 -7 62 10" stroke="#2563eb" stroke-width="4" fill="none" stroke-linecap="round"/>
   </g>
-  <text x="320" y="151" class="switch-title">Home Network / Router</text>
+  <text x="320" y="151" class="switch-title">Home LAN</text>
   <text x="320" y="183" class="body">Network: 10.100.102.0/24</text>
   <text x="320" y="211" class="body">Default gateway: 10.100.102.1</text>
 
@@ -54,7 +54,7 @@
 
   <rect x="465" y="580" width="240" height="110" rx="16" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="3"/>
   <text x="585" y="614" text-anchor="middle" class="card-title">VM Network</text>
-  <text x="585" y="646" text-anchor="middle" class="body">VLAN 0</text>
+  <text x="585" y="646" text-anchor="middle" class="body">VLAN ID 0 (untagged)</text>
   <text x="585" y="675" text-anchor="middle" class="small">Currently unused</text>
 
   <rect x="860" y="415" width="650" height="315" rx="20" fill="#f7fcf8" stroke="#86efac" stroke-width="3"/>
@@ -81,5 +81,5 @@
   <text x="1440" y="646" text-anchor="middle" class="body">VLAN 40</text>
   <text x="1440" y="675" text-anchor="middle" class="small">Planned: 10.77.40.0/24</text>
 
-  <text x="800" y="758" text-anchor="middle" class="small">The lab port groups are configured; addressing and routing will be added with the firewall.</text>
+  <text x="800" y="758" text-anchor="middle" class="small">No guest VMs are attached to the lab port groups yet.</text>
 </svg>
