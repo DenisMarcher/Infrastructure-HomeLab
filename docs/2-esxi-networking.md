@@ -20,7 +20,7 @@ The default `VM Network` port group is now used by `SF01` for its WAN interface.
 
 The gateway addresses are configured on Sophos Firewall interfaces. ESXi does not have a VMkernel interface on `vSwitch-LAB`.
 
-Sophos uses a separate virtual NIC for each internal port group rather than an 802.1Q trunk inside the guest:
+VLAN tagging is configured on the ESXi port groups. Each internal `SF01` vNIC is attached to one VLAN-backed port group, so ESXi handles the VLAN assignment before traffic reaches the guest. `SF01` does not receive an 802.1Q trunk and does not use VLAN subinterfaces for these networks.
 
 - `PortA` → `SERVERS`
 - `PortC` → `CLIENTS`
