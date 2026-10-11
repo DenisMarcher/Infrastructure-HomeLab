@@ -12,13 +12,15 @@ I am adding each part of the lab as I build and test it.
 - Dedicated physical ESXi host
 - ESXi management network on the home LAN
 - Internal lab networks isolated on a separate ESXi virtual switch
-- Additional Windows, Linux, firewall, monitoring, and backup components will be added in later stages
+- Sophos Firewall Home as the permanent routing and security layer
+- Separate `SERVERS`, `CLIENTS`, and `OPS` networks routed through Sophos
+- Windows Server, Windows 11, and Debian systems used to validate the firewall baseline
 
 ## Current Status
 
 - ✅ [ESXi installed and accessible through the Host Client over local network](docs/1-hardware-and-host.md)
 - ✅ [ESXi network foundation](docs/2-esxi-networking.md)
-- ⬜ Core virtual firewall
+- ✅ [Sophos Firewall Home core](docs/3-sophos-firewall.md)
 - ⬜ Active Directory and DNS
 - ⬜ DHCP and Windows client
 - ⬜ Linux and Docker

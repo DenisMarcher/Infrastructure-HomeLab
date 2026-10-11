@@ -1,22 +1,32 @@
 # ESXi Networking
 
-This is the ESXi network layout before the first virtual machine is deployed.
+The ESXi network foundation keeps host management independent from the virtual firewall and separates the internal lab networks on an isolated virtual switch.
 
-![Current ESXi network layout](../diagrams/2-esxi-network-layout.svg)
+The diagram below is the Phase 3 design snapshot from before the firewall VM was deployed.
 
-`vSwitch0` remains connected to the home LAN through `vmnic0`. ESXi management stays on this switch through `vmk0` at `10.100.102.69`. The default `VM Network` port group is still present but is not currently used.
+![Phase 3 ESXi network layout](../diagrams/2-esxi-network-layout.svg)
 
-`vSwitch-LAB` has no physical uplink. It contains the three internal port groups for the lab:
+`vSwitch0` is connected to the home LAN through `vmnic0`. ESXi management remains on this switch through `vmk0` at `10.100.102.69`.
 
-| Port group | VLAN | Planned subnet | Intended use |
-| --- | ---: | --- | --- |
-| `SERVERS` | 20 | `10.77.20.0/24` | Infrastructure servers |
-| `CLIENTS` | 30 | `10.77.30.0/24` | Client systems |
-| `OPS` | 40 | `10.77.40.0/24` | Monitoring, backup, and administration |
+The default `VM Network` port group is now used by `SF01` for its WAN interface. This keeps the firewall connected to the upstream home network without placing ESXi management behind the firewall.
 
-The subnets are part of the addressing plan. No lab gateway interfaces or guest IP addresses exist yet.
+`vSwitch-LAB` has no physical uplink. It carries the three internal lab port groups:
 
-No VMkernel interface is attached to `vSwitch-LAB`, so ESXi management remains on `vSwitch0` and does not depend on the future virtual firewall.
+| Port group | VLAN | Subnet | Gateway | Intended use |
+| --- | ---: | --- | --- | --- |
+| `SERVERS` | 20 | `10.77.20.0/24` | `10.77.20.1` | Infrastructure servers |
+| `CLIENTS` | 30 | `10.77.30.0/24` | `10.77.30.1` | Client systems |
+| `OPS` | 40 | `10.77.40.0/24` | `10.77.40.1` | Monitoring, backup, and administration |
+
+The gateway addresses are configured on Sophos Firewall interfaces. ESXi does not have a VMkernel interface on `vSwitch-LAB`.
+
+Sophos uses a separate virtual NIC for each internal port group rather than an 802.1Q trunk inside the guest:
+
+- `PortA` → `SERVERS`
+- `PortC` → `CLIENTS`
+- `PortD` → `OPS`
+
+`PortB` is attached to `VM Network` for WAN access.
 
 ## ESXi Host Client
 
@@ -25,3 +35,5 @@ No VMkernel interface is attached to `vSwitch-LAB`, so ESXi management remains o
 </p>
 
 *ESXi Host Client showing the three lab port groups on `vSwitch-LAB` and no physical adapter attached.*
+
+The firewall deployment and policy validation are documented in [3-sophos-firewall.md](3-sophos-firewall.md).
