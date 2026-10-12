@@ -101,7 +101,13 @@ The older linked NAT entries remain visible because Sophos created them with the
 
 I administer WebAdmin from my main PC at `10.100.102.70:4444`. Because `PortB` belongs to the `WAN` zone, I did not enable WebAdmin for the whole zone. A local service ACL exception named `FW-ACCESS` limits this management path to the `ManagementPC` host object.
 
-Device access on the internal zones is also kept narrow. The final zone configuration allows `Ping/Ping6` on `SERVERS` and `CLIENTS`; `OPS` also allows HTTPS for firewall administration.
+Device access on the internal zones is also kept narrow. The final zone configuration allows `Ping/Ping6` on `SERVERS` and `CLIENTS`; `OPS` allows HTTPS and `Ping/Ping6`. The `FW-ACCESS` exception permits HTTPS and `Ping/Ping6` from `ManagementPC` in the `WAN` zone.
+
+<p align="center">
+  <img src="../screenshots/3-sophos-device-access-acl.png" alt="Sophos Device Access settings and the FW-ACCESS local service ACL exception" width="100%">
+</p>
+
+*Local firewall access is limited by zone-level Device Access settings and the `FW-ACCESS` exception for the management PC.*
 
 ## Validation
 
