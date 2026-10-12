@@ -81,7 +81,7 @@ Logging is enabled on these rules. I disabled the automatically added MTA rule a
   <img src="../screenshots/3-sophos-firewall-rules.png" alt="Sophos firewall rule order with lab-to-home deny and separate internet rules" width="100%">
 </p>
 
-*Final rule order for the Phase 4 baseline.*
+*Final rule order for the baseline.*
 
 No rule currently permits general traffic between `SERVERS`, `CLIENTS`, and `OPS`.
 
