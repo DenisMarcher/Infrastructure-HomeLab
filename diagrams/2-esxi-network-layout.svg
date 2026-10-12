@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1080" viewBox="0 0 1800 1080" role="img" aria-labelledby="title desc">
+  <title id="title">ESXi network architecture</title>
+  <desc id="desc">
+    ESXi network architecture showing the configured host network foundation,
+    the planned Sophos Firewall Home permanent core firewall, VLAN-separated
+    SERVERS, CLIENTS and OPS port groups, and a separate Fortinet FortiGate VM vendor lab.
+  </desc>
+
+  <defs>
+    <style>
+      text { font-family: Inter, "Segoe UI", Arial, sans-serif; fill: #172033; }
+      .title { font-size: 34px; font-weight: 700; }
+      .subtitle { font-size: 17px; fill: #64748b; }
+      .host-title { font-size: 25px; font-weight: 700; }
+      .section { font-size: 23px; font-weight: 700; }
+      .card-title { font-size: 19px; font-weight: 700; }
+      .body { font-size: 16px; fill: #475569; }
+      .small { font-size: 14px; fill: #64748b; }
+      .tiny { font-size: 12px; fill: #718096; }
+      .physical { stroke: #263244; stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .future-link { stroke: #64748b; stroke-width: 3.4; fill: none; stroke-dasharray: 9 7; stroke-linecap: round; stroke-linejoin: round; }
+      .vlan20 { fill: #2563eb; }
+      .vlan30 { fill: #16a34a; }
+      .vlan40 { fill: #ea580c; }
+    </style>
+  </defs>
+
+  <rect width="1800" height="1080" fill="#ffffff"/>
+
+  <!-- Header -->
+  <text x="70" y="58" class="title">ESXi Network Architecture</text>
+  <text x="70" y="88" class="subtitle">Configured ESXi network foundation and planned firewall integration</text>
+
+  <!-- Legend: intentionally unchanged -->
+  <rect x="1245" y="24" width="485" height="190" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="1270" y="55" class="card-title">Legend</text>
+
+  <line x1="1272" y1="84" x2="1352" y2="84" class="physical"/>
+  <text x="1375" y="90" class="small">Physical uplink</text>
+
+  <line x1="1272" y1="114" x2="1352" y2="114" class="future-link"/>
+  <text x="1375" y="120" class="small">Future VM interface</text>
+
+  <rect x="1272" y="137" width="86" height="24" rx="7" fill="#ffffff" stroke="#73a7df" stroke-width="2"/>
+  <text x="1375" y="155" class="small">Configured ESXi object</text>
+
+  <rect x="1272" y="168" width="86" height="24" rx="7" fill="#fbfcfe" stroke="#7d8a9c" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="1375" y="186" class="small">Future component</text>
+
+  <!-- Home network -->
+  <rect x="615" y="118" width="490" height="96" rx="16" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.3"/>
+  <text x="860" y="151" text-anchor="middle" class="section">Home Network / Router</text>
+  <text x="860" y="178" text-anchor="middle" class="body">10.100.102.0/24</text>
+  <text x="860" y="199" text-anchor="middle" class="small">Default gateway: 10.100.102.1</text>
+
+  <!-- ESXi host -->
+  <rect x="55" y="270" width="1690" height="770" rx="22" fill="#fbfcfe" stroke="#64748b" stroke-width="2.6"/>
+  <text x="92" y="314" class="host-title">ESXI01.denyslab.com</text>
+  <text x="92" y="341" class="body">VMware ESXi 8.0 Update 3</text>
+
+  <!-- Physical uplink -->
+  <path d="M860 214 L860 350" class="physical"/>
+  <rect x="806" y="230" width="108" height="32" rx="16" fill="#ffffff" stroke="#b9c2ce" stroke-width="1.8"/>
+  <text x="860" y="252" text-anchor="middle" class="small" style="font-weight:700">vmnic0</text>
+
+  <!-- vSwitch0 -->
+  <rect x="245" y="360" width="985" height="205" rx="16" fill="#f8fafc" stroke="#73a7df" stroke-width="2.3"/>
+  <text x="277" y="397" class="section">vSwitch0</text>
+  <text x="277" y="423" class="small">Physical uplink: vmnic0</text>
+
+  <rect x="315" y="452" width="330" height="82" rx="12" fill="#ffffff" stroke="#73a7df" stroke-width="2"/>
+  <text x="480" y="481" text-anchor="middle" class="card-title">Management Network</text>
+  <text x="480" y="508" text-anchor="middle" class="body">vmk0 · 10.100.102.69</text>
+  <text x="480" y="529" text-anchor="middle" class="small">ESXi management</text>
+
+  <rect x="790" y="452" width="330" height="82" rx="12" fill="#ffffff" stroke="#73a7df" stroke-width="2"/>
+  <text x="955" y="481" text-anchor="middle" class="card-title">VM Network</text>
+  <text x="955" y="508" text-anchor="middle" class="body">VLAN 0</text>
+  <text x="955" y="529" text-anchor="middle" class="small">Currently unused</text>
+
+  <!-- Management rationale -->
+  <rect x="1270" y="360" width="420" height="118" rx="14" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="1295" y="393" class="card-title">Management path</text>
+  <text x="1295" y="422" class="body">ESXi management stays on vSwitch0.</text>
+  <text x="1295" y="449" class="small">The host remains reachable independently</text>
+  <text x="1295" y="470" class="small">of the virtual firewall.</text>
+
+  <!-- Sophos core firewall -->
+  <rect x="480" y="605" width="950" height="106" rx="16" fill="#ffffff" stroke="#7d8a9c" stroke-width="2.4" stroke-dasharray="9 7"/>
+  <text x="955" y="643" text-anchor="middle" class="section">Sophos Firewall Home</text>
+  <text x="955" y="674" text-anchor="middle" class="body">Permanent core firewall</text>
+
+  <!-- WAN -->
+  <path d="M955 534 L955 605" class="future-link"/>
+  <rect x="921" y="557" width="68" height="24" rx="12" fill="#ffffff" stroke="#aab4c2" stroke-width="1.5"/>
+  <text x="955" y="574" text-anchor="middle" class="tiny" style="font-weight:700">WAN</text>
+
+  <!-- Fortinet vendor lab -->
+  <rect x="1460" y="605" width="230" height="106" rx="16" fill="#fbfcfe" stroke="#9aa7b8" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="1550" y="638" text-anchor="middle" class="card-title">Fortinet FortiGate VM</text>
+  <text x="1550" y="666" text-anchor="middle" class="body">Vendor firewall lab</text>
+  <text x="1550" y="690" text-anchor="middle" class="small">Outside permanent path</text>
+
+  <!-- Internal future interfaces -->
+  <path d="M575 711 L575 895" class="future-link"/>
+  <path d="M955 711 L955 895" class="future-link"/>
+  <path d="M1335 711 L1335 895" class="future-link"/>
+
+  <!-- VLAN-specific vNIC labels -->
+  <rect x="517" y="754" width="116" height="28" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="575" y="773" text-anchor="middle" class="tiny" style="font-weight:700; fill:#1d4ed8">SERVERS vNIC</text>
+
+  <rect x="894" y="754" width="122" height="28" rx="14" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="955" y="773" text-anchor="middle" class="tiny" style="font-weight:700; fill:#15803d">CLIENTS vNIC</text>
+
+  <rect x="1285" y="754" width="100" height="28" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="1335" y="773" text-anchor="middle" class="tiny" style="font-weight:700; fill:#c2410c">OPS vNIC</text>
+
+  <!-- vSwitch-LAB -->
+  <rect x="245" y="825" width="1420" height="155" rx="16" fill="#f8fafc" stroke="#73a7df" stroke-width="2.3"/>
+  <text x="277" y="853" class="section">vSwitch-LAB</text>
+  <text x="277" y="878" class="small">Internal only · no physical uplink</text>
+
+  <!-- SERVERS / VLAN 20 -->
+  <rect x="425" y="895" width="300" height="65" rx="12" fill="#ffffff" stroke="#73a7df" stroke-width="2"/>
+  <rect x="425" y="895" width="300" height="8" rx="4" class="vlan20"/>
+  <text x="575" y="923" text-anchor="middle" class="card-title">SERVERS</text>
+  <text x="575" y="948" text-anchor="middle" class="body">VLAN 20 · 10.77.20.0/24</text>
+
+  <!-- CLIENTS / VLAN 30 -->
+  <rect x="805" y="895" width="300" height="65" rx="12" fill="#ffffff" stroke="#73a7df" stroke-width="2"/>
+  <rect x="805" y="895" width="300" height="8" rx="4" class="vlan30"/>
+  <text x="955" y="923" text-anchor="middle" class="card-title">CLIENTS</text>
+  <text x="955" y="948" text-anchor="middle" class="body">VLAN 30 · 10.77.30.0/24</text>
+
+  <!-- OPS / VLAN 40 -->
+  <rect x="1185" y="895" width="300" height="65" rx="12" fill="#ffffff" stroke="#73a7df" stroke-width="2"/>
+  <rect x="1185" y="895" width="300" height="8" rx="4" class="vlan40"/>
+  <text x="1335" y="923" text-anchor="middle" class="card-title">OPS</text>
+  <text x="1335" y="948" text-anchor="middle" class="body">VLAN 40 · 10.77.40.0/24</text>
+
+  <!-- Current state -->
+  <line x1="245" y1="1002" x2="1665" y2="1002" stroke="#e2e8f0" stroke-width="2"/>
+  <text x="245" y="1030" class="small">
+    Current state: vSwitch0, vSwitch-LAB and the three VLAN port groups are configured; Sophos, FortiGate and guest VMs are not deployed yet.
+  </text>
+</svg>

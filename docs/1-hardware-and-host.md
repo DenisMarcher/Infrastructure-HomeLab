@@ -9,7 +9,7 @@ I installed VMware ESXi 8.0 Update 3 on a dedicated PC that will run the infrast
 - 16 GB RAM
 - 512 GB SSD
 
-The machine was originally planned with 32 GB of RAM, but one motherboard RAM slot is not working. I decided to continue with 16 GB and adjust the VM sizes instead of delaying the lab.
+The machine was originally planned with 32 GB of RAM, but one motherboard RAM slot is not working. I decided to continue with the current hardware and keep the VM footprint small instead of delaying the lab for an upgrade.
 
 I may add another 256 GB SSD later if I need more room for temporary VMs and vendor firewall labs.
 
@@ -25,7 +25,7 @@ Installed version:
 
 I manage the host from my main PC through the ESXi Host Client.
 
-After installation, the host clock was incorrect. I corrected the host time using `time.cloudflare.com` as the NTP server before moving on. Services such as Active Directory and logging depend on accurate time.
+After installation, the host clock was incorrect. I corrected the host time using `il.pool.ntp.org` as the NTP server before moving on. Services such as Active Directory and logging depend on accurate time.
 
 The screenshot below shows the host after the initial setup, with the hostname, ESXi version, hardware information, management IP, and corrected host time.
 
@@ -35,6 +35,6 @@ The screenshot below shows the host after the initial setup, with the hostname, 
 
 With no VMs running, ESXi shows about 14 GB of memory free. I am not planning to allocate all of it to guests because the hypervisor and VM overhead still need headroom.
 
-The core VMs will stay small. Larger temporary systems, such as a Windows client or a vendor firewall VM, will only run when I need them for a specific test.
+The lab will use a small always-on footprint and temporary workloads instead of running every planned system at the same time.
 
-The next step is to build the ESXi network layout while keeping the management connection independent from the virtual firewall.
+The ESXi network layout is documented separately in [2-esxi-networking.md](2-esxi-networking.md).
