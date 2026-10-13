@@ -13,15 +13,17 @@ I am adding each part of the lab as I build and test it.
 - ESXi management network on the home LAN
 - Internal lab networks isolated on a separate ESXi virtual switch
 - Sophos Firewall Home as the permanent firewall for the lab networks
-- Additional Windows infrastructure roles, Linux services, monitoring, and backup components will be added in later stages
+- Windows Server 2022 running AD DS, DNS, and DHCP on `DC01`
+- Additional Windows roles, Linux services, monitoring, and backup components will be added in later stages
 
 ## Current Status
 
 - ✅ [ESXi installed and accessible through the Host Client over local network](docs/1-hardware-and-host.md)
 - ✅ [ESXi network foundation](docs/2-esxi-networking.md)
 - ✅ [Sophos Firewall core](docs/3-sophos-firewall.md)
-- ⬜ Active Directory and DNS
-- ⬜ DHCP and Windows client
+- ✅ [Active Directory and DNS](docs/4-active-directory-dns.md)
+- ✅ [DHCP and Windows client](docs/5-dhcp-and-windows-client.md)
+- ✅ [OUs, Group Policy, and file access](docs/6-ou-gpo-and-file-access.md)
 - ⬜ Linux and Docker
 - ⬜ Monitoring
 - ⬜ Backup and restore testing
