@@ -23,6 +23,7 @@ I am adding each part of the lab as I build and test it.
 - ✅ [Sophos Firewall core](docs/3-sophos-firewall.md)
 - ✅ [Active Directory and DNS](docs/4-active-directory-dns.md)
 - ✅ [DHCP and Windows client](docs/5-dhcp-and-windows-client.md)
+- ✅ [OUs, Group Policy, and file access](docs/6-ou-gpo-and-file-access.md)
 - ⬜ Linux and Docker
 - ⬜ Monitoring
 - ⬜ Backup and restore testing
