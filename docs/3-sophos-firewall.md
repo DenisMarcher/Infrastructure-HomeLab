@@ -10,15 +10,15 @@ For this stage I needed the firewall to:
 - provide controlled internet access through the home connection
 - block lab access to the home LAN by default
 - keep ESXi management independent from the firewall VM
-- allow Sophos WebAdmin access from my main PC without exposing it to the whole WAN zone
+- allow WebAdmin access from my main PC without exposing it to the whole WAN zone
 
 I did not add general inter-zone allow rules at this point. Those rules will be added later only when a service needs them.
 
 ## Design
 
-ESXi management stays on `vSwitch0` at `10.100.102.69`. The firewall WAN interface also connects to the home network through `vSwitch0`, while the 3 internal interfaces connect to the isolated `vSwitch-LAB`.
+ESXi management stays on `vSwitch0` at `10.100.102.69`. The firewall WAN interface also connects to the home network through `vSwitch0`, while the three internal interfaces connect to the isolated `vSwitch-LAB`.
 
-VLAN tagging is handled by ESXi at the port-group level. `SERVERS`, `CLIENTS`, and `OPS` use VLAN IDs 20, 30, and 40. Each `SF01` vNIC is connected to one VLAN-backed port group, we do not use an 802.1Q trunk or VLAN subinterfaces.
+VLAN tagging is handled by ESXi at the port-group level. `SERVERS`, `CLIENTS`, and `OPS` use VLAN IDs 20, 30, and 40. Each `SF01` vNIC is connected to one VLAN-backed port group, so the Sophos guest does not use an 802.1Q trunk or VLAN subinterfaces.
 
 ### SF01 VM
 
@@ -29,7 +29,7 @@ VLAN tagging is handled by ESXi at the port-group level. `SERVERS`, `CLIENTS`, a
 - 80 GB auxiliary disk
 - 4 virtual NICs
 
-The host's current ESXi licensing/configuration limited this VM to one vCPU, so I kept the firewall at one vCPU.
+The host's current ESXi licensing/configuration limited this VM to one vCPU, so I kept the firewall at one vCPU for this stage.
 
 <p align="center">
   <img src="../screenshots/3-sophos-vm-hardware.png" alt="SF01 virtual machine resources and four ESXi network adapters" width="85%">
@@ -87,19 +87,19 @@ No rule currently permits general traffic between `SERVERS`, `CLIENTS`, and `OPS
 
 ### NAT
 
-Outbound lab traffic uses `Default SNAT IPv4`. The source address is translating and traffic leaves through `PortB`.
+Outbound lab traffic uses `Default SNAT IPv4`. The source address is masqueraded and traffic leaves through `PortB`.
 
 <p align="center">
   <img src="../screenshots/3-sophos-nat-rules.png" alt="Sophos NAT rules showing Default SNAT IPv4 using MASQ through PortB" width="100%">
 </p>
 
-*`Default SNAT IPv4` provides outbound address translation through `PortB`.*
+*`Default SNAT IPv4` provides outbound masquerading through `PortB`.*
 
 The older linked NAT entries remain visible because Sophos created them with the original default policies. Their parent firewall policies are disabled.
 
 ### Management access
 
-I administer Sophos WebAdmin from my main PC at `10.100.102.70:4444`. Because `PortB` belongs to the `WAN` zone, I did not gave access to WebAdmin for the whole zone. A local service ACL exception named `FW-ACCESS` limits this management path to the `ManagementPC` host object.
+I administer WebAdmin from my main PC at `10.100.102.70:4444`. Because `PortB` belongs to the `WAN` zone, I did not enable WebAdmin for the whole zone. A local service ACL exception named `FW-ACCESS` limits this management path to the `ManagementPC` host object.
 
 Device access on the internal zones is also kept narrow. The final zone configuration allows `Ping/Ping6` on `SERVERS` and `CLIENTS`; `OPS` allows HTTPS and `Ping/Ping6`. The `FW-ACCESS` exception permits HTTPS and `Ping/Ping6` from `ManagementPC` in the `WAN` zone.
 
@@ -149,13 +149,13 @@ The firewall log provides the policy evidence. It shows internet traffic from th
 
 *Allowed internet traffic with SNAT and denied lab-to-home traffic in the same log view.*
 
-I also ran cross-zone ICMP checks from the test systems. Those pings timed out, but I did not capture a matching final-drop log entry. I therefore treat them as endpoint reachability checks.
+I also ran cross-zone ICMP checks from the test systems. Those pings timed out, but I did not capture a matching final-drop log entry. I therefore treat them as endpoint reachability checks, not as proof that the Sophos `Drop all` rule was the component that discarded ICMP.
 
 ### Configuration backup
 
 After validation, I exported the Sophos configuration and saved the copy on my main PC, outside the ESXi datastore and outside this repository.
 
-I have not performed a restore test yet. The export is a saved configuration copy, not a verified recovery procedure.
+I have not performed a restore test yet. The export is therefore a saved configuration copy, not a verified recovery procedure.
 
 ## Troubleshooting
 

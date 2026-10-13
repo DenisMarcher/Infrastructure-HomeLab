@@ -1,81 +1,71 @@
 # Active Directory and DNS
 
-I set up `DC01` as the first domain controller for `denyslab.com`. It runs Active Directory Domain Services (AD DS) and DNS on Windows Server 2022. I kept this stage limited to the domain and its core name-resolution services; DHCP, client domain join, and application-specific firewall rules belong to the next stage.
+I installed Active Directory Domain Services and DNS on `DC01` and created the `denyslab.com` forest. This is the first domain controller in the lab.
 
 ## Requirement
 
-I needed one domain controller with a static address, a new AD forest, and DNS that could resolve both internal domain records and internet names. The server had to remain in the isolated `SERVERS` network behind Sophos Firewall.
+I needed a domain controller on the `SERVERS` network, with a static IP and DNS for both Active Directory records and internet lookups.
 
 ## Design
 
 | Setting | Value |
 | --- | --- |
-| Server | `DC01` — Windows Server 2022 Standard Evaluation |
-| AD domain / forest | `denyslab.com` |
-| NetBIOS domain | `DENYSLAB` |
-| ESXi port group | `SERVERS` (VLAN 20) |
-| IPv4 address | `10.77.20.10/24` (static) |
-| Default gateway | `10.77.20.1` (`SF01` / `PortA`) |
-| Preferred DNS | `10.77.20.10` (the server itself) |
+| Server | `DC01`, Windows Server 2022 Standard Evaluation |
+| Domain | `denyslab.com` (`DENYSLAB`) |
+| Network | `SERVERS`, VLAN 20 |
+| Address | `10.77.20.10/24` |
+| Gateway | `10.77.20.1` (Sophos `PortA`) |
+| Preferred DNS | `10.77.20.10` |
 | DNS forwarders | `8.8.8.8`, `1.1.1.1` |
-| Forest / domain functional level | Windows Server 2016 |
-| Domain controller roles | DNS Server, Global Catalog |
+| Domain and forest functional levels | Windows Server 2016 |
 
-Currently, DC01 is the only domain controller. Active Directory DNS is hosted locally on DC01. Public resolvers are configured as DNS forwarders rather than the server's preferred DNS. The Windows time zone is set to Jerusalem. The NTP server will be assigned during the monitoring configuration phase.
+`DC01` uses its own DNS service for domain lookups. The public DNS servers are configured as forwarders, not as alternate DNS servers on the network adapter. DNS Server and Global Catalog are enabled on the domain controller.
 
 ## Implementation
 
-I changed the Windows default hostname to `DC01` before installing AD DS. The server already had a static address on `SERVERS` Zone.
+I renamed the Windows Server VM to `DC01` and installed the AD DS role and management tools.
 
-I installed the AD DS role with the management tools and confirmed that Windows reported the role as installed.
+![AD DS role installed](../screenshots/4-ad-ds-role-installed.png)
 
-![AD DS role installed on DC01](../screenshots/4-ad-ds-role-installed.png)
+*AD DS installed on `DC01`.*
 
-*AD DS role installation and hostname verification on `DC01`.*
+I created a new forest named `denyslab.com` with the Server Manager promotion wizard. I kept the domain and forest functional levels at Windows Server 2016, enabled DNS Server and Global Catalog, and rebooted after promotion.
 
-I Deployed a new forest named denyslab.com using the Server Manager promotion wizard. Set both forest and domain functional levels to Windows Server 2016. Enabled DNS Server and Global Catalog roles, and skipped DNS delegation. The prerequisite check passed successfully; completed the promotion and rebooted the server.
+![New AD forest configuration](../screenshots/4-ad-forest-review.png)
 
-![New AD forest settings](../screenshots/4-ad-forest-review.png)
+*Forest settings selected during domain controller promotion.*
 
-*New forest settings reviewed before promoting `DC01`.*
+I set the adapter's preferred DNS server to `10.77.20.10` and configured `8.8.8.8` and `1.1.1.1` as DNS forwarders.
 
-After promotion, I configured the network adapter to use `10.77.20.10` as its preferred DNS server. I left alternate DNS empty and configured `8.8.8.8` and `1.1.1.1` as forwarders in DNS Manager.
+![DC01 network settings](../screenshots/4-dc01-ipv4-dns.png)
 
-![DC01 IPv4 and DNS settings](../screenshots/4-dc01-ipv4-dns.png)
-
-*Static IPv4 configuration and local DNS on `DC01`.*
+*Static IPv4 address and local DNS server on `DC01`.*
 
 ## Validation
 
-In Active Directory Users and Computers, `DC01` appears in the `Domain Controllers` container of `denyslab.com` and is shown as a Global Catalog.
+In Active Directory Users and Computers, `DC01` appears in the `Domain Controllers` container as a Global Catalog.
 
-![DC01 in Active Directory Users and Computers](../screenshots/4-ad-domain-controller.png)
+![Domain controller in ADUC](../screenshots/4-ad-domain-controller.png)
 
-*`DC01` registered in the domain's `Domain Controllers` container.*
+*`DC01` in the `denyslab.com` Domain Controllers container.*
 
-From `DC01`, I checked internal and external name resolution:
+I checked DNS from `DC01`:
 
 - `nslookup dc01.denyslab.com` returned `10.77.20.10`.
-- `nslookup google.com` returned public addresses.
+- `nslookup google.com` returned public IP addresses.
 
 ![Internal and external DNS lookups](../screenshots/4-dns-lookup.png)
 
-*Internal AD hostname and external DNS lookups from `DC01`.*
+*Local domain and external DNS lookups.*
 
-I also ran `dcdiag /test:dns /v`. The DNS summary reported passing checks for `DC01`, including the forest-root LDAP SRV record and the `_msdcs.denyslab.com` delegation. The local DNS server and both forwarders passed the reported DNS tests.
+`dcdiag /test:dns /v` passed the reported DNS checks, including the forest-root LDAP SRV record and `_msdcs.denyslab.com` delegation.
 
-![AD DNS test summary](../screenshots/4-dns-dcdiag.png)
+![Domain controller DNS test](../screenshots/4-dns-dcdiag.png)
 
-*DNS diagnostic summary for `denyslab.com`.*
+*DNS test results for `DC01`.*
 
-A separate `net share` check showed both `SYSVOL` and `NETLOGON` shared on `DC01`.
+I also checked `net share` and found both `SYSVOL` and `NETLOGON`. A separate `dcdiag /q` run reported `DFSREvent` and `SystemLog` entries from the Windows event logs.
 
-## Troubleshooting and remaining checks
-
-The promotion wizard warned that a DNS delegation could not be created in a parent zone. This was expected for a new forest in a lab environment; otherwise, the prerequisite check passed successfully.
-An nslookup check displayed Server: UnKnown for the local IPv6 loopback address (::1), though all queries returned the expected results. This missing display name for the IPv6 loopback resolver was not treated as a DNS lookup failure.
-
-A subsequent dcdiag /q run was not clean, reporting DFSREvent and SystemLog errors. These stemmed from logged events, including a prior unexpected shutdown, Windows Update issues, and DCOM communication errors related to the public DNS addresses. However, both SYSVOL and NETLOGON shares were confirmed present. These event logs will be reviewed during the next health check
 ## Next stage
 
-The next step involves DHCP deployment and Windows client connectivity. The planned architecture includes running Windows DHCP on DC01, configuring a Sophos DHCP relay for the CLIENTS subnet, and assigning the domain DNS (10.77.20.10) to clients. DHCP scopes, relay policies, inter-zone AD firewall access, and client domain joins have not yet been configured.
+Windows DHCP, Sophos DHCP relay, and Windows client domain join are covered in [DHCP and Windows Client](5-dhcp-and-windows-client.md).
