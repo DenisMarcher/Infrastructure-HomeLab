@@ -87,8 +87,7 @@ I joined `CLIENT-W11-01` to `denyslab.com` and signed in with the test domain ac
 
 *Domain sign-in on the Windows 11 client and its computer account in AD.*
 
-The `OPS` scope and relay are configured and visible, but I have not recorded an OPS endpoint receiving a lease from Windows DHCP yet. The successful DHCP lease and domain join checks in this stage were performed on `CLIENT-W11-01`.
-
+The `OPS` scope and relay are configured and visible, but I have not recorded an OPS endpoint receiving a lease from Windows DHCP yet. 
 ## Troubleshooting
 
 ### Client received DHCP but could not resolve internet names
