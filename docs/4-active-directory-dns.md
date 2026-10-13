@@ -4,7 +4,7 @@ I set up `DC01` as the first domain controller for `denyslab.com`. It runs Activ
 
 ## Requirement
 
-I needed one domain controller with a fixed address, a new AD forest, and DNS that could resolve both internal domain records and internet names. The server had to remain in the isolated `SERVERS` network behind Sophos Firewall.
+I needed one domain controller with a static address, a new AD forest, and DNS that could resolve both internal domain records and internet names. The server had to remain in the isolated `SERVERS` network behind Sophos Firewall.
 
 ## Design
 
@@ -21,11 +21,11 @@ I needed one domain controller with a fixed address, a new AD forest, and DNS th
 | Forest / domain functional level | Windows Server 2016 |
 | Domain controller roles | DNS Server, Global Catalog |
 
-`DC01` is the only domain controller in this stage. Domain DNS is hosted on `DC01`; public resolvers are configured as DNS Server forwarders, not as the server's preferred DNS. The Windows time zone is set to Jerusalem. A post-promotion NTP source check is not part of the evidence collected here.
+Currently, DC01 is the only domain controller. Active Directory DNS is hosted locally on DC01. Public resolvers are configured as DNS forwarders rather than the server's preferred DNS. The Windows time zone is set to Jerusalem. The NTP server will be assigned during the monitoring configuration phase.
 
 ## Implementation
 
-I changed the Windows hostname from its generated name to `DC01` before installing AD DS. The server already had a static address on `SERVERS`.
+I changed the Windows default hostname to `DC01` before installing AD DS. The server already had a static address on `SERVERS` Zone.
 
 I installed the AD DS role with the management tools and confirmed that Windows reported the role as installed.
 
@@ -33,7 +33,7 @@ I installed the AD DS role with the management tools and confirmed that Windows 
 
 *AD DS role installation and hostname verification on `DC01`.*
 
-I used the Server Manager promotion wizard to create a new forest called `denyslab.com`. I kept the Windows Server 2016 forest and domain functional levels, enabled DNS Server and Global Catalog, and did not create a DNS delegation. The wizard's prerequisite check passed, then I completed the promotion and restarted the server.
+I Deployed a new forest named denyslab.com using the Server Manager promotion wizard. Set both forest and domain functional levels to Windows Server 2016. Enabled DNS Server and Global Catalog roles, and skipped DNS delegation. The prerequisite check passed successfully; completed the promotion and rebooted the server.
 
 ![New AD forest settings](../screenshots/4-ad-forest-review.png)
 
@@ -72,12 +72,10 @@ A separate `net share` check showed both `SYSVOL` and `NETLOGON` shared on `DC01
 
 ## Troubleshooting and remaining checks
 
-The promotion wizard warned that it could not create a DNS delegation in a parent zone. This was expected for the new forest in this lab; its prerequisite check otherwise passed.
+The promotion wizard warned that a DNS delegation could not be created in a parent zone. This was expected for a new forest in a lab environment; otherwise, the prerequisite check passed successfully.
+An nslookup check displayed Server: UnKnown for the local IPv6 loopback address (::1), though all queries returned the expected results. This missing display name for the IPv6 loopback resolver was not treated as a DNS lookup failure.
 
-`nslookup` displayed `Server: UnKnown` for the local DNS address `::1`, although both queries returned the expected results. I did not treat the missing display name for the IPv6 loopback resolver as a failed DNS lookup.
-
-A later `dcdiag /q` run was **not clean**. It reported `DFSREvent` and `SystemLog` failures based on logged events, including an earlier unexpected shutdown, Windows Update shutdown problems, and DCOM communication errors involving the public DNS addresses. I confirmed that the `SYSVOL` and `NETLOGON` shares were present, but I did not obtain a clean repeat of the general `dcdiag` run. Those event-based findings remain open for a later health check; the passing DNS-specific test does not establish that every AD health check passed.
-
+A subsequent dcdiag /q run was not clean, reporting DFSREvent and SystemLog errors. These stemmed from logged events, including a prior unexpected shutdown, Windows Update issues, and DCOM communication errors related to the public DNS addresses. However, both SYSVOL and NETLOGON shares were confirmed present. These event logs will be reviewed during the next health check
 ## Next stage
 
-The next step is DHCP and Windows client connectivity. The planned design is Windows DHCP on `DC01`, Sophos DHCP relay for the `CLIENTS` subnet, and domain DNS (`10.77.20.10`) handed out to Windows clients. DHCP scopes, relay policies, inter-zone AD access, and client domain join have not been configured in this stage.
+The next step involves DHCP deployment and Windows client connectivity. The planned architecture includes running Windows DHCP on DC01, configuring a Sophos DHCP relay for the CLIENTS subnet, and assigning the domain DNS (10.77.20.10) to clients. DHCP scopes, relay policies, inter-zone AD firewall access, and client domain joins have not yet been configured.
