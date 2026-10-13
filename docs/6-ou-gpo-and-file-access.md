@@ -1,91 +1,103 @@
 # Active Directory OUs, Group Policy, and File Access
 
-I organized the domain accounts into department OUs, set up group-based access to two shared folders, and tested user policies on `CLIENT-W11-01`. All of this runs in the existing `denyslab.com` domain, with `DC01` providing the shares for this small lab.
+I set up department groups, shared folders, and user policies in `denyslab.com`. I used two accounts on `CLIENT-W11-01` to check which policies applied and whether the Finance drive was mapped.
 
 ## Requirement
 
-I wanted Finance and HR users to access their own files without giving everyone access to both departments. I also wanted to apply one screen saver policy to the department accounts and map a Finance drive automatically, instead of asking users to connect it by hand.
+Finance and HR need separate shared folders, with access assigned through AD security groups. I also wanted a common screen saver policy for department users and a mapped drive for Finance.
 
 ## Design
 
-The lab uses the `Finance`, `HR`, `IT`, and `Workstations` OUs. The Finance account is `jackhanma` (Jack Hanma); the HR test account is `hr_test` (Karen Karen). `CLIENT-W11-01` is the domain-joined Windows 11 test machine.
+The lab has `Finance`, `HR`, `IT`, and `Workstations` OUs. I used `DC01` for the file shares because this lab is running on a host with limited memory. A separate file server is not part of this stage.
 
-I kept permissions separate from user accounts. For Finance, `Finance_Hosts_Global` is a global security group containing Jack Hanma, and that group is a member of the domain-local `Finance_Local` group. The `Finance_Local` group has Modify permission on the Finance folder. HR uses `HR_Local` for the HR folder's Modify permission; the HR test user's logon token also includes `HR_Hosts_Auth` and `HR_Local`.
+The folders are on `DC01` under `C:\SharedFolders`. Each folder has its own domain-local security group:
 
-The shares live on `DC01` under `C:\SharedFolders`:
-
-| Folder | Network path | NTFS group with Modify |
+| Folder on DC01 | Share | Group with NTFS Modify permission |
 | --- | --- | --- |
-| `Finance` | `\\DC01\Finance` | `Finance_Local` |
-| `HR` | `\\DC01\HR` | `HR_Local` |
+| `C:\SharedFolders\Finance` | `\\DC01\Finance` | `Finance_Local` |
+| `C:\SharedFolders\HR` | `\\DC01\HR` | `HR_Local` |
 
-I used the domain controller for file sharing to keep the VM count down. A separate file server can be added later; this isn't meant to be a production file-server design.
+For Finance, the account `jackhanma` belongs to `Finance_Hosts_Global`. That global group is a member of `Finance_Local`. I assigned the folder permission to the domain-local group rather than to Jack Hanma directly.
+
+I configured two user GPOs. `User_ScreenLock` applies the screen saver settings to department users. `Finance-DriveMap` maps the Finance share to `F:` for members of `Finance_Hosts_Global`. HR users access their share by its network path; I have not configured an HR drive-mapping GPO.
 
 ## Implementation
 
-### OUs and security groups
+### OU and group membership
 
-In Active Directory Users and Computers, I placed the Finance account and its groups in the `Finance` OU. I assigned the user to `Finance_Hosts_Global` and nested that group inside `Finance_Local`. This lets me change department membership without assigning folder permissions to each user individually.
+In Active Directory Users and Computers, the `Finance` OU contains Jack Hanma and the `Finance_Hosts_Global` and `Finance_Local` security groups. The group membership shown below is:
 
-![Finance OU and group membership](../screenshots/6-ad-group-membership.png)
+`Jack Hanma → Finance_Hosts_Global → Finance_Local`
 
-*Jack Hanma belongs to `Finance_Hosts_Global`, which is a member of `Finance_Local`.*
+![Finance user and group membership](../screenshots/6-ad-group-membership.png)
 
-### Shared folders and permissions
+*Jack Hanma is a member of `Finance_Hosts_Global`, which is nested in `Finance_Local`.*
 
-I created `Finance` and `HR` under `C:\SharedFolders` on `DC01`. The Security tab shows Modify permission for `Finance_Local` on Finance and `HR_Local` on HR. SYSTEM and administrative entries are also present. I used different groups on the two folders rather than granting broad access to all domain users.
+### Shared folders
 
-![Finance and HR NTFS permissions](../screenshots/6-file-ntfs-permissions.png)
+I created the Finance and HR folders under `C:\SharedFolders` on `DC01` and assigned Modify permission to different domain-local groups. The Security tabs also show SYSTEM and administrative accounts.
 
-*The two folders have separate domain-local groups with Modify permission.*
+![Finance and HR folder permissions](../screenshots/6-file-ntfs-permissions.png)
+
+*`Finance_Local` has Modify permission on Finance; `HR_Local` has Modify permission on HR.*
 
 ### Group Policy
 
-I configured two user GPOs with different purposes:
+I configured `User_ScreenLock` with these user settings:
 
-- `User_ScreenLock` enables the screen saver, requires a password when resuming, forces `scrnsave.scr`, and sets the timeout to **1200 seconds (20 minutes)**.
-- `Finance-DriveMap` uses Group Policy Preferences to map `\\DC01\Finance` as drive `F:` with **Update** and **Reconnect** enabled. Item-level targeting checks membership in `DENYSLAB\Finance_Hosts_Global`.
+- Enable screen saver: Enabled
+- Force specific screen saver: `scrnsave.scr`
+- Password protect the screen saver: Enabled
+- Screen saver timeout: 1200 seconds (20 minutes)
 
-![Screen saver GPO settings](../screenshots/6-gpo-screenlock-settings.png)
+![Screen saver policy settings](../screenshots/6-gpo-screenlock-settings.png)
 
-*The screen saver policy has a 1200-second timeout and password protection enabled.*
+*`User_ScreenLock` settings in Group Policy Management.*
 
-![Finance drive mapping GPO settings](../screenshots/6-gpo-finance-drivemap.png)
+For `Finance-DriveMap`, I used Group Policy Preferences with the following settings:
 
-*The Finance mapping uses drive `F:` and targets the Finance global group.*
+| Setting | Value |
+| --- | --- |
+| Action | Update |
+| Location | `\\DC01\Finance` |
+| Drive letter | `F:` |
+| Reconnect | Enabled |
+| Item-level targeting | `DENYSLAB\Finance_Hosts_Global` |
 
-HR does not have an automatic drive-mapping GPO at this stage. Its share can still be opened by its network path.
+![Finance drive mapping policy](../screenshots/6-gpo-finance-drivemap.png)
+
+*`Finance-DriveMap` maps `F:` to the Finance share for the Finance global group.*
 
 ## Validation
 
-### Finance user
+### Finance account
 
-I signed in to `CLIENT-W11-01` as `DENYSLAB\jackhanma` and checked the applied user policies with `gpresult /r /scope:user`. Both `User_ScreenLock` and `Finance-DriveMap` appeared in the applied list. The `net use` output showed drive `F:` connected to `\\DC01\Finance`. The user's group list also included `Finance_Hosts_Global` and `Finance_Local`.
+I signed in to `CLIENT-W11-01` as `DENYSLAB\jackhanma` and checked the user policy results. `gpresult` listed both `User_ScreenLock` and `Finance-DriveMap` as applied. The `net use` output showed `F:` connected to `\\DC01\Finance`.
 
-![Finance GPO result and mapped drive](../screenshots/6-finance-gpresult-drive.png)
+![Finance user policy results and mapped drive](../screenshots/6-finance-gpresult-drive.png)
 
-*Both GPOs applied to the Finance user, and `F:` points to the Finance share.*
+*Both user GPOs are applied, and `F:` is connected to the Finance share.*
 
-### HR user
+### HR account
 
-I repeated the check while signed in as the HR test user, `hr_test`. The result showed `User_ScreenLock` applied, but not `Finance-DriveMap`; `net use` showed no mapped connections. This matches the intended setup, where only Finance gets an automatic drive mapping.
+I also checked the HR user session on the same Windows 11 VM. The `gpresult` output showed `User_ScreenLock` applied. `Finance-DriveMap` was not in the applied list, and `net use` showed no mapped connections.
 
-![HR applied Group Policy and drive list](../screenshots/6-hr-gpresult.png)
+![HR user policy results](../screenshots/6-hr-gpresult.png)
 
-*The HR user received the screen saver GPO but no Finance drive mapping.*
+*The HR session has the screen saver policy but no mapped Finance drive.*
 
-I also opened the HR share in Explorer under the HR session, then tried to open `\\DC01\Finance`. The HR folder opened, while Windows displayed an error when trying to access Finance.
+In File Explorer, the HR share opened. An attempt to open `\\DC01\Finance` displayed a network-access error while Windows was still checking for details.
 
-![HR share access and Finance access error](../screenshots/6-hr-share-access-check.png)
+![HR share and Finance access attempt](../screenshots/6-hr-share-access-check.png)
 
-*The HR share is open; the attempt to open Finance shows a Windows network-access error.*
+*The HR share is open; Windows reports a problem accessing Finance.*
 
 ## Troubleshooting and remaining checks
 
-The Finance share did not open in the HR test session. The screenshot was taken while Windows was still checking the error, so it does not show a final error code. I have not treated that dialog alone as proof of an NTFS `Access denied` result or identified a specific cause. The separate NTFS groups are visible in the server configuration, but the exact denial reason still needs a final error or an effective-access check.
+The Finance path did not open during the HR test, but the screenshot does not show the final error code. I have not confirmed whether the failure was specifically caused by NTFS permissions. That still needs a final error message or an effective-access check.
 
-The `gpresult` output confirms that `User_ScreenLock` was applied to both test users. I have not captured a separate test of the workstation locking after 20 minutes. The screenshots do not include a test of creating or editing files in either share.
+The `gpresult` checks confirm that `User_ScreenLock` was applied to both test users. I have not recorded a separate test showing the workstation requesting a password after 20 minutes of inactivity. I also have not recorded a create/edit test on the shared folders.
 
 ## Next stage
 
-The next stage is backup and restore testing. I plan to save the Windows configuration and share data outside the ESXi host, then restore a small test item to check that the backup can actually be used.
+Next I plan to back up the Windows configuration and shared files outside the ESXi host, then perform a small restore test.
