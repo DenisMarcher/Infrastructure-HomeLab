@@ -72,7 +72,7 @@ The GPMC Scope views show `User_ScreenLock` linked to the `Finance`, `HR`, and `
 
 I signed in to `CLIENT-W11-01` as `DENYSLAB\jackhanma` and ran `gpresult /r /scope:user` and `net use`. Both `User_ScreenLock` and `Finance-DriveMap` appeared in the applied GPO list, and `F:` was connected to `\\DC01\Finance`.
 
-![Finance GPO results and mapped drive](../screenshots/6-finance-gpresult-drive.png)
+![Finance GPO results and mapped drive](../screenshots/6-finance-gpresult-drive.png?v=575c4ee)
 
 *The Finance user received both GPOs. The mapped drive was checked separately with `net use`.*
 
@@ -92,7 +92,7 @@ I repeated the checks as `hr_test`. `gpresult` listed `User_ScreenLock`, while `
 
 I opened `\\DC01\HR` in File Explorer under the HR account. In the same session, `dir \\DC01\Finance` returned `Access is denied.`
 
-![HR and Finance share access checks](../screenshots/6-hr-share-access-check.png)
+![HR and Finance share access checks](../screenshots/6-hr-share-access-check.png?v=575c4ee)
 
 *The HR share opened; the Finance share returned `Access is denied`.*
 

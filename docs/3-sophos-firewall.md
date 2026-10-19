@@ -144,7 +144,7 @@ I tested the baseline with one system in each internal network. Public DNS was u
 The firewall log provides the policy evidence. It shows internet traffic from the lab allowed by the matching zone rule with `Default SNAT IPv4` applied, and traffic from all three networks to `10.100.102.1` denied by `LAB_TO_HOME_DENY`. I captured the updated log after `CLIENT-W11-01` had moved to DHCP and `SERVERS` was running `DC01`. The source addresses shown are `10.77.20.10`, `10.77.30.100`, and `10.77.40.10`.
 
 <p align="center">
-  <img src="../screenshots/3-sophos-traffic-log.png" alt="Sophos Log Viewer showing allowed SNAT traffic and denied traffic from all three lab networks to the home gateway" width="100%">
+  <img src="../screenshots/3-sophos-traffic-log.png?v=575c4ee" alt="Sophos Log Viewer showing allowed SNAT traffic and denied traffic from all three lab networks to the home gateway" width="100%">
 </p>
 
 *Allowed internet traffic with SNAT and denied lab-to-home traffic in the same log view.*

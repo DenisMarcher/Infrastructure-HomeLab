@@ -23,7 +23,7 @@ Both scopes use `denyslab.com` as the DNS domain (DHCP option 015). I reserved t
 
 I installed the DHCP Server role on `DC01` and created the `CLIENTS` and `OPS` scopes. Both scopes are active, with eight-day leases.
 
-![Windows DHCP scopes](../screenshots/5-windows-dhcp-scopes.png)
+![Windows DHCP scopes](../screenshots/5-windows-dhcp-scopes.png?v=575c4ee)
 
 *`CLIENTS` address pool and scope options (003 router, 006 DNS server, and 015 DNS domain). The `OPS` scope is also configured.*
 
@@ -66,7 +66,7 @@ I changed `CLIENT-W11-01` from a static address to DHCP. Its network settings sh
 
 The client resolved `dc01.denyslab.com` to `10.77.20.10` and resolved `google.com` using `DC01`. The refreshed screenshot also shows successful ICMP replies from `google.com`.
 
-![Windows client DNS validation](../screenshots/5-client-dns-validation.png)
+![Windows client DNS validation](../screenshots/5-client-dns-validation.png?v=575c4ee)
 
 *The Windows client uses `DC01` for internal and external DNS lookups; external connectivity also passed.*
 
