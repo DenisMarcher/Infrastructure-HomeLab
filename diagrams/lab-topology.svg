@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1250" viewBox="0 0 1800 1250" role="img" aria-labelledby="title desc">
+<title id="title">Lab topology</title>
+<desc id="desc">Current lab topology: home network, ESXi host with vSwitch0 and vSwitch-LAB, Sophos Firewall SF01 routing the SERVERS, CLIENTS and OPS VLAN networks, and the DC01, CLIENT-W11-01 and DEB12 virtual machines.</desc>
+<defs><style>
+text { font-family: Inter, "Segoe UI", Arial, sans-serif; fill: #172033; }
+.title { font-size: 34px; font-weight: 700; }
+.subtitle { font-size: 17px; fill: #64748b; }
+.host-title { font-size: 25px; font-weight: 700; }
+.section { font-size: 23px; font-weight: 700; }
+.card-title { font-size: 19px; font-weight: 700; }
+.body { font-size: 16px; fill: #475569; }
+.small { font-size: 14px; fill: #64748b; }
+.pill { font-size: 13px; font-weight: 700; }
+.physical { stroke: #263244; stroke-width: 4; fill: none; stroke-linecap: round; }
+.virtual { stroke: #64748b; stroke-width: 3; fill: none; stroke-linecap: round; }
+</style></defs>
+<rect width="1800" height="1250" fill="#ffffff"/>
+<text x="70" y="58" class="title" text-anchor="start">Lab Topology</text>
+<text x="70" y="88" class="subtitle" text-anchor="start">Current state: ESXi host, Sophos firewall, and lab virtual machines</text>
+<rect x="1245" y="24" width="485" height="190" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2" />
+<text x="1270" y="55" class="card-title" text-anchor="start">Legend</text>
+<line x1="1272" y1="84" x2="1352" y2="84" class="physical"/>
+<text x="1375" y="90" class="small" text-anchor="start">Physical uplink</text>
+<line x1="1272" y1="114" x2="1352" y2="114" class="virtual"/>
+<text x="1375" y="120" class="small" text-anchor="start">Virtual connection</text>
+<rect x="1272" y="143" width="80" height="12" rx="4" fill="#2563eb"/>
+<text x="1375" y="154" class="small" text-anchor="start">VLAN 20 · SERVERS</text>
+<rect x="1272" y="167" width="80" height="12" rx="4" fill="#16a34a"/>
+<text x="1375" y="178" class="small" text-anchor="start">VLAN 30 · CLIENTS</text>
+<rect x="1272" y="191" width="80" height="12" rx="4" fill="#ea580c"/>
+<text x="1375" y="202" class="small" text-anchor="start">VLAN 40 · OPS</text>
+<rect x="70" y="118" width="360" height="96" rx="16" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.3" />
+<text x="250" y="150" class="section" text-anchor="middle">Main PC</text>
+<text x="250" y="175" class="body" text-anchor="middle">ESXi Host Client · Sophos WebAdmin</text>
+<text x="250" y="197" class="small" text-anchor="middle">WebAdmin: 10.100.102.70:4444</text>
+<line x1="430" y1="166" x2="615" y2="166" class="virtual"/>
+<rect x="615" y="118" width="490" height="96" rx="16" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.3" />
+<text x="860" y="151" class="section" text-anchor="middle">Home Network / Router</text>
+<text x="860" y="178" class="body" text-anchor="middle">10.100.102.0/24</text>
+<text x="860" y="199" class="small" text-anchor="middle">Default gateway: 10.100.102.1</text>
+<rect x="55" y="270" width="1690" height="940" rx="22" fill="#fbfcfe" stroke="#64748b" stroke-width="2.6" />
+<text x="92" y="305" class="host-title" text-anchor="start">ESXI01.denyslab.com</text>
+<text x="92" y="335" class="small" text-anchor="start">VMware ESXi 8.0 Update 3 · Core i3-10100 · 16 GB RAM</text>
+<line x1="860" y1="214" x2="860" y2="360" class="physical"/>
+<rect x="805.0" y="231" width="110" height="30" rx="15" fill="#ffffff" stroke="#263244" stroke-width="2"/>
+<text x="860" y="251" text-anchor="middle" class="pill" style="fill:#263244">vmnic0</text>
+<rect x="245" y="360" width="900" height="200" rx="18" fill="#ffffff" stroke="#73a7df" stroke-width="2.2" />
+<text x="277" y="392" class="section" text-anchor="start">vSwitch0</text>
+<text x="277" y="418" class="small" text-anchor="start">Physical uplink: vmnic0</text>
+<rect x="300" y="450" width="300" height="84" rx="14" fill="#ffffff" stroke="#73a7df" stroke-width="2.2" />
+<text x="450" y="480" class="card-title" text-anchor="middle">Management Network</text>
+<text x="450" y="504" class="body" text-anchor="middle">vmk0 · 10.100.102.69</text>
+<text x="450" y="524" class="small" text-anchor="middle">ESXi management</text>
+<rect x="690" y="450" width="300" height="84" rx="14" fill="#ffffff" stroke="#73a7df" stroke-width="2.2" />
+<text x="840" y="480" class="card-title" text-anchor="middle">VM Network</text>
+<text x="840" y="504" class="body" text-anchor="middle">VLAN 0</text>
+<text x="840" y="524" class="small" text-anchor="middle">Used by SF01 PortB (WAN)</text>
+<rect x="1190" y="360" width="455" height="130" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
+<text x="1215" y="392" class="card-title" text-anchor="start">Management path</text>
+<text x="1215" y="418" class="body" text-anchor="start">ESXi management stays on vSwitch0.</text>
+<text x="1215" y="442" class="small" text-anchor="start">The host remains reachable independently</text>
+<text x="1215" y="462" class="small" text-anchor="start">of the virtual firewall.</text>
+<line x1="840" y1="534" x2="840" y2="610" class="virtual"/>
+<rect x="690.0" y="570" width="300" height="30" rx="15" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+<text x="840" y="590" text-anchor="middle" class="pill" style="fill:#64748b">PortB · WAN · 10.100.102.70 (DHCP)</text>
+<rect x="245" y="610" width="900" height="170" rx="18" fill="#ffffff" stroke="#73a7df" stroke-width="2.6" />
+<text x="695" y="650" class="section" text-anchor="middle">SF01</text>
+<text x="695" y="677" class="body" text-anchor="middle">Sophos Firewall Home · permanent core firewall</text>
+<text x="695" y="704" class="small" text-anchor="middle">Zones · routing · SNAT · firewall rules · DHCP relay</text>
+<text x="695" y="730" class="small" text-anchor="middle">WebAdmin limited to ManagementPC (FW-ACCESS exception)</text>
+<rect x="1190" y="610" width="455" height="190" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
+<text x="1215" y="642" class="card-title" text-anchor="start">Firewall policy summary</text>
+<text x="1215" y="672" class="body" text-anchor="start">Lab networks → home LAN: drop</text>
+<text x="1215" y="694" class="body" text-anchor="start">Lab networks → internet: allow, SNAT via PortB</text>
+<text x="1215" y="716" class="body" text-anchor="start">CLIENTS, OPS → DC01: DNS</text>
+<text x="1215" y="738" class="body" text-anchor="start">CLIENTS → DC01: AD Services</text>
+<text x="1215" y="760" class="body" text-anchor="start">DHCP relay: PortC, PortD → 10.77.20.10</text>
+<text x="1215" y="782" class="small" text-anchor="start">Everything else: drop</text>
+<rect x="245" y="830" width="900" height="350" rx="18" fill="#ffffff" stroke="#73a7df" stroke-width="2.2" />
+<text x="277" y="862" class="section" text-anchor="start">vSwitch-LAB</text>
+<text x="277" y="886" class="small" text-anchor="start">No physical uplink</text>
+<line x1="470" y1="780" x2="470" y2="905" class="virtual"/>
+<rect x="365.0" y="790" width="210" height="30" rx="15" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<text x="470" y="810" text-anchor="middle" class="pill" style="fill:#2563eb">PortA · 10.77.20.1</text>
+<rect x="348" y="905" width="245" height="80" rx="14" fill="#ffffff" stroke="#73a7df" stroke-width="2.2" />
+<rect x="348" y="905" width="245" height="7" rx="3" fill="#2563eb"/>
+<text x="470" y="940" class="card-title" text-anchor="middle">SERVERS</text>
+<text x="470" y="964" class="body" text-anchor="middle">VLAN 20 · 10.77.20.0/24</text>
+<line x1="470" y1="985" x2="470" y2="1030" class="virtual"/>
+<rect x="348" y="1030" width="245" height="126" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" />
+<text x="470" y="1060" class="card-title" text-anchor="middle">DC01</text>
+<text x="470" y="1085" class="body" text-anchor="middle">VM name: SRV-DC01</text>
+<text x="470" y="1108" class="body" text-anchor="middle">10.77.20.10 · static</text>
+<text x="470" y="1132" class="small" text-anchor="middle">AD DS · DNS · DHCP · file shares</text>
+<line x1="740" y1="780" x2="740" y2="905" class="virtual"/>
+<rect x="635.0" y="790" width="210" height="30" rx="15" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+<text x="740" y="810" text-anchor="middle" class="pill" style="fill:#16a34a">PortC · 10.77.30.1</text>
+<rect x="618" y="905" width="245" height="80" rx="14" fill="#ffffff" stroke="#73a7df" stroke-width="2.2" />
+<rect x="618" y="905" width="245" height="7" rx="3" fill="#16a34a"/>
+<text x="740" y="940" class="card-title" text-anchor="middle">CLIENTS</text>
+<text x="740" y="964" class="body" text-anchor="middle">VLAN 30 · 10.77.30.0/24</text>
+<line x1="740" y1="985" x2="740" y2="1030" class="virtual"/>
+<rect x="618" y="1030" width="245" height="126" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" />
+<text x="740" y="1060" class="card-title" text-anchor="middle">CLIENT-W11-01</text>
+<text x="740" y="1085" class="body" text-anchor="middle">Windows 11 domain client</text>
+<text x="740" y="1108" class="body" text-anchor="middle">10.77.30.100 · DHCP</text>
+<text x="740" y="1132" class="small" text-anchor="middle">Joined to denyslab.com</text>
+<line x1="1010" y1="780" x2="1010" y2="905" class="virtual"/>
+<rect x="905.0" y="790" width="210" height="30" rx="15" fill="#ffffff" stroke="#ea580c" stroke-width="2"/>
+<text x="1010" y="810" text-anchor="middle" class="pill" style="fill:#ea580c">PortD · 10.77.40.1</text>
+<rect x="888" y="905" width="245" height="80" rx="14" fill="#ffffff" stroke="#73a7df" stroke-width="2.2" />
+<rect x="888" y="905" width="245" height="7" rx="3" fill="#ea580c"/>
+<text x="1010" y="940" class="card-title" text-anchor="middle">OPS</text>
+<text x="1010" y="964" class="body" text-anchor="middle">VLAN 40 · 10.77.40.0/24</text>
+<line x1="1010" y1="985" x2="1010" y2="1030" class="virtual"/>
+<rect x="888" y="1030" width="245" height="126" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" />
+<text x="1010" y="1060" class="card-title" text-anchor="middle">DEB12</text>
+<text x="1010" y="1085" class="body" text-anchor="middle">Debian 12 test host</text>
+<text x="1010" y="1108" class="body" text-anchor="middle">10.77.40.10 · static</text>
+<text x="1010" y="1132" class="small" text-anchor="middle">Linux stage</text>
+</svg>

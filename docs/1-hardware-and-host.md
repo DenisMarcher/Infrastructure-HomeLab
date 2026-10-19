@@ -1,13 +1,13 @@
 # ESXi Host
 
-I installed VMware ESXi 8.0 Update 3 on a dedicated PC that will run the infrastructure VMs for this lab.
+I installed VMware ESXi 8.0 Update 3 on a dedicated PC that runs the infrastructure VMs for this lab.
 
 ## Host
 
 - ASUS H410M-A
 - Intel Core i3-10100 @ 3.60 GHz
 - 16 GB RAM
-- 512 GB SSD
+- 512 GB SSD (the ESXi Host Client showed approximately 334 GB as the VMFS datastore)
 
 The machine was originally planned with 32 GB of RAM, but one motherboard RAM slot is not working. I decided to continue with the current hardware and keep the VM footprint small instead of delaying the lab for an upgrade.
 
@@ -29,7 +29,7 @@ After installation, the host clock was incorrect. I corrected the host time usin
 
 The screenshot below shows the host after the initial setup, with the hostname, ESXi version, hardware information, management IP, and corrected host time.
 
-![ESXi host summary](../screenshots/esxi-host-summary.png)
+![ESXi host summary](../screenshots/1-esxi-host-summary.png)
 
 ## Resource limits
 

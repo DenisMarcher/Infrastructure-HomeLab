@@ -1,10 +1,16 @@
 # ESXi Networking
 
-The ESXi network foundation keeps host management independent from the virtual firewall and separates the internal lab networks on an isolated virtual switch.
+## Requirement
 
-The diagram below is the Phase 3 design snapshot from before the firewall VM was deployed.
+ESXi management needs to stay reachable even if the firewall VM is down. The lab also needs three isolated networks for servers, clients, and operations. Traffic between them should cross the firewall.
 
-![Phase 3 ESXi network layout](../diagrams/2-esxi-network-layout.svg)
+## Design
+
+Host management stays on `vSwitch0`, outside the virtual firewall. The internal lab networks share a separate vSwitch with no physical uplink.
+
+The diagram below is the initial network design from before the firewall VM was deployed. The [README](../README.md) contains the current topology with the deployed VMs.
+
+![Initial ESXi network design](../diagrams/2-esxi-network-layout.svg)
 
 `vSwitch0` is connected to the home LAN through `vmnic0`. ESXi management remains on this switch through `vmk0` at `10.100.102.69`.
 
@@ -22,13 +28,15 @@ The gateway addresses are configured on Sophos Firewall interfaces. ESXi does no
 
 VLAN tagging is configured on the ESXi port groups. Each internal `SF01` vNIC is attached to one VLAN-backed port group, so ESXi handles the VLAN assignment before traffic reaches the guest. `SF01` does not receive an 802.1Q trunk and does not use VLAN subinterfaces for these networks.
 
+Port groups with the same VLAN ID on a vSwitch would share one broadcast domain. Separate VLAN IDs keep `SERVERS`, `CLIENTS`, and `OPS` isolated at Layer 2 even though the vSwitch has no physical uplink. Routing and access between those networks are handled by Sophos.
+
 - `PortA` → `SERVERS`
 - `PortC` → `CLIENTS`
 - `PortD` → `OPS`
 
 `PortB` is attached to `VM Network` for WAN access.
 
-## ESXi Host Client
+## Validation
 
 <p align="center">
   <img src="../screenshots/2-esxi-vswitch-lab-proof.png" alt="vSwitch-LAB configuration in ESXi Host Client" width="100%">

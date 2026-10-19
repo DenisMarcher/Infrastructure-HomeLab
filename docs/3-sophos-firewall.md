@@ -18,7 +18,7 @@ I did not add general inter-zone allow rules at this point. Those rules will be 
 
 ESXi management stays on `vSwitch0` at `10.100.102.69`. The firewall WAN interface also connects to the home network through `vSwitch0`, while the three internal interfaces connect to the isolated `vSwitch-LAB`.
 
-VLAN tagging is handled by ESXi at the port-group level. `SERVERS`, `CLIENTS`, and `OPS` use VLAN IDs 20, 30, and 40. Each `SF01` vNIC is connected to one VLAN-backed port group, so the Sophos guest does not use an 802.1Q trunk or VLAN subinterfaces.
+VLAN tagging is handled by ESXi on the port groups (VLAN IDs 20, 30, and 40; see [2-esxi-networking.md](2-esxi-networking.md)). Each `SF01` vNIC is attached to one of them, so Sophos does not use an 802.1Q trunk or VLAN subinterfaces.
 
 ### SF01 VM
 
@@ -29,7 +29,7 @@ VLAN tagging is handled by ESXi at the port-group level. `SERVERS`, `CLIENTS`, a
 - 80 GB auxiliary disk
 - 4 virtual NICs
 
-The host's current ESXi licensing/configuration limited this VM to one vCPU, so I kept the firewall at one vCPU for this stage.
+I kept the firewall at 1 vCPU and 4 GB RAM for this lab. I have not verified that the ESXi license limits it to one vCPU; that needs to be checked before documenting a licensing restriction.
 
 <p align="center">
   <img src="../screenshots/3-sophos-vm-hardware.png" alt="SF01 virtual machine resources and four ESXi network adapters" width="85%">
@@ -111,12 +111,12 @@ Device access on the internal zones is also kept narrow. The final zone configur
 
 ## Validation
 
-I tested the baseline with one system in each internal network. Public DNS was used temporarily for these checks. Domain clients will use the domain DNS service after `DC01` is deployed.
+I tested the baseline with one system in each internal network. Public DNS was used temporarily for these checks. Domain clients use the domain DNS service after `DC01` was deployed.
 
-| Test system | Network and address | Internet by IP | DNS resolution | Home LAN reachability |
+| Test system | Network and address at initial test | Internet by IP | DNS resolution | Home LAN reachability |
 | --- | --- | --- | --- | --- |
 | Windows Server | `SERVERS` — `10.77.20.10/24` | Pass | Pass | No reply |
-| Windows 11 | `CLIENTS` — `10.77.30.10/24` | Pass | Pass | No reply |
+| Windows 11 | `CLIENTS` — `10.77.30.10/24` (later DHCP `.100`) | Pass | Pass | No reply |
 | Debian 12 | `OPS` — `10.77.40.10/24` | Pass | Pass | No reply |
 
 ### Endpoint checks
@@ -141,10 +141,10 @@ I tested the baseline with one system in each internal network. Public DNS was u
 
 ### Firewall log
 
-The firewall log provides the policy evidence. It shows internet traffic from the lab allowed by the matching zone rule with `Default SNAT IPv4` applied, and lab traffic to `10.100.102.1` denied by `LAB_TO_HOME_DENY`.
+The firewall log provides the policy evidence. It shows internet traffic from the lab allowed by the matching zone rule with `Default SNAT IPv4` applied, and traffic from all three networks to `10.100.102.1` denied by `LAB_TO_HOME_DENY`. I captured the updated log after `CLIENT-W11-01` had moved to DHCP and `SERVERS` was running `DC01`. The source addresses shown are `10.77.20.10`, `10.77.30.100`, and `10.77.40.10`.
 
 <p align="center">
-  <img src="../screenshots/3-sophos-traffic-log.png" alt="Sophos Log Viewer showing allowed SNAT traffic and denied lab-to-home traffic" width="100%">
+  <img src="../screenshots/3-sophos-traffic-log.png" alt="Sophos Log Viewer showing allowed SNAT traffic and denied traffic from all three lab networks to the home gateway" width="100%">
 </p>
 
 *Allowed internet traffic with SNAT and denied lab-to-home traffic in the same log view.*
@@ -169,4 +169,4 @@ The cause was that ICMP to the firewall itself was not enabled for the `SERVERS`
 
 The Windows 11 client could ping `8.8.8.8`, but hostname lookups and browser access failed with `DNS_PROBE_FINISHED_BAD_CONFIG`. The successful IP test showed that the client gateway, firewall rule, SNAT, and WAN path were working.
 
-I configured `8.8.8.8` and `1.1.1.1` as temporary DNS servers and repeated the test. Name resolution then worked. These public resolvers are only a temporary validation setting; the domain design will use `DC01` for DNS.
+I configured `8.8.8.8` and `1.1.1.1` as temporary DNS servers and repeated the test. Name resolution then worked. These public resolvers were only a temporary validation setting; the domain design now uses `DC01` for DNS.
