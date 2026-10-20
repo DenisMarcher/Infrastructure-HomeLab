@@ -104,4 +104,4 @@ I opened `\\DC01\HR` in File Explorer under the HR account. In the same session,
 
 ## Next stage
 
-Next I will back up the Windows configuration and shared folder data outside the ESXi host, then test restoring a file.
+The next implemented stages are [Linux and Docker](7-linux-and-docker.md) and [Zabbix Monitoring](8-zabbix-monitoring.md). Backup and restore testing was postponed until after monitoring and remains a separate planned stage.

@@ -14,7 +14,7 @@ I am adding each part of the lab as I build and test it.
 - Internal lab networks isolated on a separate ESXi virtual switch
 - Sophos Firewall Home as the permanent firewall for the lab networks
 - Windows Server 2022 running AD DS, DNS, DHCP, and the lab file shares on `DC01`
-- Linux services, monitoring, and further backup and recovery work are planned for later stages
+- Debian 12 running Docker Engine, Docker Compose, and Zabbix monitoring on `DEB12`; backup and recovery remain planned
 
 ## Lab Inventory
 
@@ -23,7 +23,7 @@ I am adding each part of the lab as I build and test it.
 | `SF01` | `SF01` | WAN, SERVERS, CLIENTS, OPS | WAN `10.100.102.70` (DHCP); gateways `10.77.20.1`, `10.77.30.1`, `10.77.40.1` | Sophos Firewall Home |
 | `SRV-DC01` | `DC01` | SERVERS (VLAN 20) | `10.77.20.10` (static) | AD DS, DNS, DHCP, file shares |
 | `CLIENT-W11-01` | `CLIENT-W11-01` | CLIENTS (VLAN 30) | `10.77.30.100` (DHCP, as captured) | Windows 11 domain client |
-| `DEB12` | `DEB12` | OPS (VLAN 40) | `10.77.40.10` (static) | Debian 12 test host |
+| `DEB12` | `DEB12` | OPS (VLAN 40) | `10.77.40.10` (static) | Debian 12, Docker, Zabbix Server/Web/PostgreSQL, Zabbix Agent 2 |
 
 ![Current lab topology](diagrams/lab-topology.svg)
 
@@ -35,8 +35,8 @@ I am adding each part of the lab as I build and test it.
 - ✅ [Active Directory and DNS](docs/4-active-directory-dns.md)
 - ✅ [DHCP and Windows client](docs/5-dhcp-and-windows-client.md)
 - ✅ [OUs, Group Policy, and file access](docs/6-ou-gpo-and-file-access.md)
-- ⬜ Linux services and Docker
-- ⬜ Monitoring
+- ✅ [Linux and Docker](docs/7-linux-and-docker.md)
+- ✅ [Zabbix monitoring](docs/8-zabbix-monitoring.md)
 - ⬜ Backup and restore testing
 - ⬜ Vendor firewall lab
 - ⬜ Hybrid Microsoft 365 stage
@@ -47,6 +47,8 @@ I am adding each part of the lab as I build and test it.
 - Sophos Firewall: zones, routing, SNAT, ordered firewall rules, DHCP relay, scoped device access, log-based validation
 - Windows Server 2022: AD DS, DNS with forwarders, DHCP, OUs, security groups (AGDLP), Group Policy, file shares with NTFS permissions
 - Windows 11 domain client: DHCP, domain join, GPO and mapped-drive checks with `gpresult` and `net use`
+- Debian 12: SSH administration, disk layout, Docker Engine and Compose, persistent container storage
+- Zabbix 7.0 LTS: Docker-based server, PostgreSQL, Linux and Windows agents, and Sophos ICMP monitoring
 - Documented stages using Requirement, Design, Implementation, Validation, and Troubleshooting where applicable
 
 ## Known Limitations
@@ -54,6 +56,8 @@ I am adding each part of the lab as I build and test it.
 - One host with 16 GB of RAM, so the always-on footprint is small and the file shares live on `DC01`.
 - One domain controller, with no tested system or data restore procedure yet. A Sophos configuration export is stored off-host, but it has not been restore-tested.
 - Windows Server 2022 is an evaluation build. The Windows 11 license status has not been verified for this documentation update.
+- The Debian root filesystem is only 2.2 GB and was 91% full at the last check. Zabbix runs on a 2 GB VM; its web interface is accessed over an SSH tunnel.
+- The initial Zabbix administrator password has not been changed. Firewall rule scopes, alert delivery, and recovery tests still need review.
 - `denyslab.com` is used as the internal AD DNS namespace (see [4-active-directory-dns.md](docs/4-active-directory-dns.md)). Ownership of the public DNS domain is not documented here.
 
 ## Repository Structure
