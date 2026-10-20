@@ -76,4 +76,4 @@ After the ESXi disk resize, `df -h` still showed the old root filesystem size. `
 
 The Debian root filesystem is still small: the last check showed **91% usage**, with about **191 MB free**. The extra 12 GB is for Docker data, not for `/`.
 
-The Sophos `MAIN_TO_DEB12_SSH` rule still showed `Any host` as its destination in the rule list. I need to narrow that rule to DEB12.
+
