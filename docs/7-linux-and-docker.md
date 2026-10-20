@@ -1,82 +1,79 @@
 # Linux and Docker
 
-I reused the existing `DEB12` VM for Docker rather than creating a separate Linux server. The ESXi host has 16 GB of RAM, and the firewall and domain controller already use part of that capacity. This stage gave me a Linux host that I can manage remotely and use for containerized lab services.
+I already had Debian 12 running on `DEB12` for network tests, so I used the same VM for Docker. The ESXi host has 16 GB of RAM, and I didn't want another VM just to run a few containers.
 
 ## Requirement
 
-I needed a Linux host on the isolated lab network, remote administration from my main PC, enough disk space for container data, and a working Docker Engine with Compose. The existing `DEB12` installation had been used for earlier network tests, so I kept it instead of reinstalling Debian.
+I needed SSH access from my Windows PC, a working Docker installation, and somewhere to keep container data without filling the Debian system partitions.
 
 ## Design
 
 | Setting | Value |
 | --- | --- |
-| ESXi VM | `DEB12` |
-| OS | Debian 12 (Bookworm) |
+| VM / OS | `DEB12` / Debian 12 (Bookworm) |
 | Network | `OPS`, VLAN 40 |
-| IPv4 / gateway | `10.77.40.10/24` / `10.77.40.1` |
-| Allocated memory | 2 GB |
-| Virtual disk | 22 GB after expansion |
-| Docker data mount | `/dev/sda3` (ext4, about 12 GB) at `/var/lib/docker` |
+| IP / gateway | `10.77.40.10/24` / `10.77.40.1` |
+| VM memory | 2 GB |
+| Virtual disk | 22 GB |
+| Docker storage | `/dev/sda3`, ext4, about 12 GB, mounted at `/var/lib/docker` |
 
-The disk layout was not a single large root partition. Debian had separate filesystems for `/`, `/var`, `/tmp`, and `/home`. After increasing the virtual disk size in ESXi, the root filesystem was still about 2.2 GB because the additional space had not been partitioned.
-
-I kept the existing partitions and created `/dev/sda3` in the unallocated space. Docker data is stored on that filesystem, not on the small `/var` partition. I also moved containerd's data root to `/var/lib/docker/containerd-store`, because this Docker version uses the containerd image store.
+Debian was installed with separate partitions for `/`, `/var`, `/tmp`, and `/home`. Increasing the virtual disk in ESXi didn't enlarge any of those partitions. I used the newly available space for Docker instead of moving the existing partitions.
 
 ## Implementation
 
-### Remote access
+### SSH access
 
-I installed and started OpenSSH on `DEB12`. My main Windows PC is on the home LAN, so I added a route to `10.77.40.10` through the Sophos WAN interface (`10.100.102.70`) and created the Sophos rule `MAIN_TO_DEB12_SSH`. This let me use Windows Terminal instead of typing long commands in the ESXi console.
+Typing commands in the ESXi console was slowing me down. I installed OpenSSH on Debian and connected from Windows Terminal instead.
 
-![SSH session from the Windows PC](../screenshots/7-ssh-session.png)
+My Windows PC is on the home network, so I added a route to `10.77.40.10` through the Sophos WAN address (`10.100.102.70`). I also added the `MAIN_TO_DEB12_SSH` firewall rule. After that, `ssh denis@10.77.40.10` worked from the PC.
 
-*An SSH session from Windows to `denis@10.77.40.10`, with the Linux network and disk layout visible.*
+![SSH session from Windows](../screenshots/7-ssh-session.png)
 
-### Disk layout and container storage
+*SSH connection from Windows Terminal to DEB12.*
 
-I expanded the virtual disk to 22 GB in ESXi and then created an additional primary partition in the free space. I formatted `/dev/sda3` as ext4 and configured it to mount at `/var/lib/docker` using its UUID in `/etc/fstab`.
+### Disk space for Docker
 
-Initially, containerd still used its default `/var/lib/containerd` location on the small `/var` filesystem. After checking the effective configuration, I stopped the Docker services, copied the existing containerd data, changed the root path in `/etc/containerd/config.toml`, and started the services again. The effective root then showed `/var/lib/docker/containerd-store`.
+The virtual disk showed 22 GB, but the root filesystem was still only about 2.2 GB. I checked the partition table before making changes. There was enough unallocated space to create a new primary partition without touching the existing Linux filesystems.
 
-I kept the original containerd directory until the new location could be checked. The new Docker filesystem was about 12 GB and mounted separately from `/` and `/var`.
+I created `/dev/sda3`, formatted it as ext4, and mounted it at `/var/lib/docker` using its UUID in `/etc/fstab`. That gave Docker a separate 12 GB filesystem.
+
+I also changed the containerd data root to `/var/lib/docker/containerd-store`. Otherwise, container images would have used `/var/lib/containerd` on the much smaller `/var` partition. After moving the existing data and restarting the services, the effective containerd configuration showed the new path.
 
 ### Docker Engine and Compose
 
-I installed Docker Engine from Docker's Debian repository and installed the Compose plugin. The tested versions were Docker Engine **29.9.1** and Docker Compose **v5.6.0**. The Docker service was active after installation.
+I installed Docker Engine and the Compose plugin from Docker's Debian repository. The versions shown during testing were:
 
-The first repository configuration was wrong: I accidentally created `docker.source`, which APT ignored because it was not a supported source-list filename. I replaced it with a valid `docker.list` entry, refreshed the package lists, and confirmed that `docker-ce` had an installation candidate before proceeding.
+- Docker Engine `29.9.1`
+- Docker Compose `v5.6.0`
+
+The Docker service was running, and `docker run --rm hello-world` downloaded an image and started a container.
+
+![Docker installation check](../screenshots/7-docker-hello-world.png)
+
+*Docker and Compose versions, storage mounts, and the hello-world test.*
 
 ## Validation
 
-I tested the installation with `docker run --rm hello-world`. Docker downloaded the image and printed `Hello from Docker!`, confirming that the daemon could pull and run a container.
+I checked the Docker service, the storage mounts, and the `hello-world` output. I then used this Docker installation to run PostgreSQL, Zabbix Server, and the Zabbix web interface. All three containers were running in the later check, so Docker was also tested with an actual lab workload.
 
-![Docker installation test](../screenshots/7-docker-hello-world.png)
-
-*Docker and Compose versions, active Docker service, the separate data filesystem, and a completed `hello-world` run.*
-
-The Docker host was subsequently used to run the Zabbix stack described in [Zabbix Monitoring](8-zabbix-monitoring.md). That provides a more useful workload test than `hello-world` alone.
+The Zabbix setup and its results are in [Zabbix Monitoring](8-zabbix-monitoring.md).
 
 ## Troubleshooting
 
-### APT could not find Docker packages
+### APT couldn't find Docker
 
-`apt` reported that `docker-ce` had no installation candidate. I checked the repository files and found that the source file was named `docker.source`, so APT ignored it. After creating a valid source-list file, package lookup and installation worked.
+My first repository file was named `docker.source`. APT ignored it and couldn't find `docker-ce`. I replaced it with a valid `docker.list` entry, ran `apt update`, and checked the available package version before installing Docker.
 
-### The larger virtual disk did not appear under `/`
+### The new disk space wasn't in the root filesystem
 
-Increasing the VMDK in ESXi did not expand the Debian partitions. I checked the partition layout before changing it. Rather than moving the extended partition and the existing filesystems, I added `/dev/sda3` in the free space and mounted it separately for Docker data.
+After the ESXi disk resize, `df -h` still showed the old root filesystem size. `fdisk` showed that the extra space was unallocated. I created `/dev/sda3` there and mounted it separately for Docker.
 
-### Container images could fill `/var`
+### Containerd was writing to the small /var partition
 
-`containerd config dump` initially showed `/var/lib/containerd` as the data root. Since `/var` has only about 1.1 GB total, I moved the containerd data root onto the new Docker filesystem and restarted the services. Both Docker and containerd were active afterward.
+`containerd config dump` showed `/var/lib/containerd` as the data root. I stopped Docker and containerd, copied the existing data to the new filesystem, updated `/etc/containerd/config.toml`, and restarted the services. The new root path appeared in the effective configuration, and Docker was running afterward.
 
-## Known Limitations
+## Follow-up
 
-- The root filesystem is still only about 2.2 GB. It was **91% full**, with about **191–210 MB free** during the final checks. Docker's separate filesystem does not fix the small root filesystem; free space must be monitored before further package installations.
-- The lab host has 16 GB of RAM. `DEB12` has 2 GB allocated, so I run other VMs only when they are needed for a test.
-- `MAIN_TO_DEB12_SSH` worked for remote administration, but its destination was shown as `Any host` in the Sophos rule list. I still need to restrict the rule to `10.77.40.10` and verify its exact service scope.
-- No complete backup or restore procedure has been tested. That work is deferred until after the Linux/Docker and monitoring stages.
+The Debian root filesystem is still small: the last check showed **91% usage**, with about **191 MB free**. The extra 12 GB is for Docker data, not for `/`.
 
-## Next Stage
-
-I deployed Zabbix Server, PostgreSQL, and the web frontend as Docker containers on this same VM. See [Zabbix Monitoring](8-zabbix-monitoring.md).
+The Sophos `MAIN_TO_DEB12_SSH` rule still showed `Any host` as its destination in the rule list. I need to narrow that rule to DEB12.
