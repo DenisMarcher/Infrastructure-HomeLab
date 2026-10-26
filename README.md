@@ -1,67 +1,49 @@
 # Infrastructure Homelab
 
-This repository contains my infrastructure homelab built on a dedicated VMware ESXi host.
+I built this lab on one VMware ESXi host to practice network segmentation, Windows domain services, Docker, and monitoring. With 16 GB of RAM, I don't keep every VM running at the same time. The Windows client is mainly used for tests.
 
-I am adding each part of the lab as I build and test it.
+![Final lab topology](diagrams/lab-topology.svg)
 
-## Current Environment
+*ESXi management stays on the home network. Sophos routes the three lab networks, and DEB12 runs Docker and Zabbix.*
 
-- VMware ESXi 8.0 Update 3
-- Intel Core i3-10100
-- 16 GB RAM
-- Dedicated physical ESXi host
-- ESXi management network on the home LAN
-- Internal lab networks isolated on a separate ESXi virtual switch
-- Sophos Firewall Home as the permanent firewall for the lab networks
-- Windows Server 2022 running AD DS, DNS, DHCP, and the lab file shares on `DC01`
-- Debian 12 running Docker Engine, Docker Compose, and Zabbix monitoring on `DEB12`; backup and recovery remain planned
+## Lab setup
 
-## Lab Inventory
+- **Host:** ESXi 8.0 Update 3, Intel Core i3-10100, 16 GB RAM
+- **Networking:** `vSwitch0` for host management and Sophos WAN; `vSwitch-LAB` for the isolated VLANs
 
-| VM | Hostname | Network | Address | Role |
-| --- | --- | --- | --- | --- |
-| `SF01` | `SF01` | WAN, SERVERS, CLIENTS, OPS | WAN `10.100.102.70` (DHCP); gateways `10.77.20.1`, `10.77.30.1`, `10.77.40.1` | Sophos Firewall Home |
-| `SRV-DC01` | `DC01` | SERVERS (VLAN 20) | `10.77.20.10` (static) | AD DS, DNS, DHCP, file shares |
-| `CLIENT-W11-01` | `CLIENT-W11-01` | CLIENTS (VLAN 30) | `10.77.30.100` (DHCP, as captured) | Windows 11 domain client |
-| `DEB12` | `DEB12` | OPS (VLAN 40) | `10.77.40.10` (static) | Debian 12, Docker, Zabbix Server/Web/PostgreSQL, Zabbix Agent 2 |
+| VM | Network | Address | What runs on it |
+| --- | --- | --- | --- |
+| `SF01` | WAN, SERVERS, CLIENTS, OPS | WAN `10.100.102.70` (DHCP); internal gateways `10.77.20.1`, `10.77.30.1`, `10.77.40.1` | Sophos Firewall Home |
+| `SRV-DC01` (`DC01`) | SERVERS / VLAN 20 | `10.77.20.10` (static) | Windows Server 2022: AD DS, DNS, DHCP, Finance and HR shares |
+| `CLIENT-W11-01` | CLIENTS / VLAN 30 | `10.77.30.100` (DHCP at last check) | Windows 11 domain client |
+| `DEB12` | OPS / VLAN 40 | `10.77.40.10` (static) | Debian 12, Docker, PostgreSQL, Zabbix Server/Web, Zabbix Agent 2 |
 
-![Current lab topology](diagrams/lab-topology.svg)
+## Build notes
 
-## Current Status
+I wrote up each part after setting it up and checking that it worked:
 
-- ✅ [ESXi installed and accessible through the Host Client over local network](docs/1-hardware-and-host.md)
-- ✅ [ESXi network foundation](docs/2-esxi-networking.md)
-- ✅ [Sophos Firewall core](docs/3-sophos-firewall.md)
-- ✅ [Active Directory and DNS](docs/4-active-directory-dns.md)
-- ✅ [DHCP and Windows client](docs/5-dhcp-and-windows-client.md)
-- ✅ [OUs, Group Policy, and file access](docs/6-ou-gpo-and-file-access.md)
-- ✅ [Linux and Docker](docs/7-linux-and-docker.md)
-- ✅ [Zabbix monitoring](docs/8-zabbix-monitoring.md)
-- ⬜ Backup and restore testing
-- ⬜ Vendor firewall lab
-- ⬜ Hybrid Microsoft 365 stage
+1. [ESXi host](docs/1-hardware-and-host.md) — hardware, installation, management access
+2. [ESXi networking](docs/2-esxi-networking.md) — vSwitches, port groups, VLANs
+3. [Sophos firewall](docs/3-sophos-firewall.md) — zones, NAT, firewall rules, connectivity tests
+4. [Active Directory and DNS](docs/4-active-directory-dns.md) — domain controller and name resolution
+5. [DHCP and Windows client](docs/5-dhcp-and-windows-client.md) — DHCP relay, domain join
+6. [OUs, GPOs and file access](docs/6-ou-gpo-and-file-access.md) — groups, mapped drive, share permissions
+7. [Linux and Docker](docs/7-linux-and-docker.md) — SSH, container storage, Docker Engine and Compose
+8. [Zabbix monitoring](docs/8-zabbix-monitoring.md) — Linux and Windows agents, Sophos ICMP checks
 
-## What This Lab Demonstrates
+## Checks I ran
 
-- VMware ESXi: standard vSwitches, VLAN-backed port groups, host management kept separate from the guest networks
-- Sophos Firewall: zones, routing, SNAT, ordered firewall rules, DHCP relay, scoped device access, log-based validation
-- Windows Server 2022: AD DS, DNS with forwarders, DHCP, OUs, security groups (AGDLP), Group Policy, file shares with NTFS permissions
-- Windows 11 domain client: DHCP, domain join, GPO and mapped-drive checks with `gpresult` and `net use`
-- Debian 12: SSH administration, disk layout, Docker Engine and Compose, persistent container storage
-- Zabbix 7.0 LTS: Docker-based server, PostgreSQL, Linux and Windows agents, and Sophos ICMP monitoring
-- Documented stages using Requirement, Design, Implementation, Validation, and Troubleshooting where applicable
+- Checked internet access and lab-to-home blocking in the Sophos firewall log.
+- Joined the Windows 11 client to `denyslab.com`, checked DHCP/DNS, applied GPOs, and tested Finance and HR file access.
+- Ran a Docker test container, then started the Zabbix stack with Compose.
+- Collected Linux and Windows metrics in Zabbix and checked the Sophos OPS interface by ICMP.
 
-## Known Limitations
+The screenshots and troubleshooting details are in the linked notes.
 
-- One host with 16 GB of RAM, so the always-on footprint is small and the file shares live on `DC01`.
-- One domain controller, with no tested system or data restore procedure yet. A Sophos configuration export is stored off-host, but it has not been restore-tested.
-- Windows Server 2022 is an evaluation build. The Windows 11 license status has not been verified for this documentation update.
-- The Debian root filesystem is only 2.2 GB and was 91% full at the last check. Zabbix runs on a 2 GB VM; its web interface is accessed over an SSH tunnel.
-- The initial Zabbix administrator password has not been changed. Firewall rule scopes, alert delivery, and recovery tests still need review.
-- `denyslab.com` is used as the internal AD DNS namespace (see [4-active-directory-dns.md](docs/4-active-directory-dns.md)). Ownership of the public DNS domain is not documented here.
+## Things to keep in mind
 
-## Repository Structure
+This is a single-host lab, not a fault-tolerant setup. File shares run on `DC01` to save memory. A Sophos configuration export was saved outside ESXi, but I haven't tested a complete backup and restore.
 
-- `docs/` – documentation for completed stages
-- `diagrams/` – network diagrams
-- `screenshots/` – evidence for documented steps
+At the last check, Debian's 2.2 GB root filesystem was 91% full. Zabbix's initial admin password had not been changed, and a few firewall-rule scopes still needed tightening. These are documented in the relevant stages rather than presented as finished work.
+
+Windows Server runs as an evaluation build. I use `denyslab.com` internally for Active Directory; ownership of the public DNS name has not been established in this documentation.

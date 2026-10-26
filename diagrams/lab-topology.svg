@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1250" viewBox="0 0 1800 1250" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1260" viewBox="0 0 1800 1260" role="img" aria-labelledby="title desc">
 <title id="title">Lab topology</title>
-<desc id="desc">Current lab topology: home network, ESXi host with vSwitch0 and vSwitch-LAB, Sophos Firewall SF01 routing the SERVERS, CLIENTS and OPS VLAN networks, and the DC01, CLIENT-W11-01 and DEB12 virtual machines.</desc>
+<desc id="desc">Deployed infrastructure homelab: ESXi management on vSwitch0, SF01 routing isolated SERVERS, CLIENTS and OPS networks, DC01 providing Active Directory, DNS, DHCP and file shares, a Windows 11 client, and Debian 12 running Docker, PostgreSQL and Zabbix.</desc>
 <defs><style>
 text { font-family: Inter, "Segoe UI", Arial, sans-serif; fill: #172033; }
 .title { font-size: 34px; font-weight: 700; }
@@ -14,9 +14,9 @@ text { font-family: Inter, "Segoe UI", Arial, sans-serif; fill: #172033; }
 .physical { stroke: #263244; stroke-width: 4; fill: none; stroke-linecap: round; }
 .virtual { stroke: #64748b; stroke-width: 3; fill: none; stroke-linecap: round; }
 </style></defs>
-<rect width="1800" height="1250" fill="#ffffff"/>
-<text x="70" y="58" class="title" text-anchor="start">Lab Topology</text>
-<text x="70" y="88" class="subtitle" text-anchor="start">Current state: ESXi host, Sophos firewall, and lab virtual machines</text>
+<rect width="1800" height="1260" fill="#ffffff"/>
+<text x="70" y="58" class="title" text-anchor="start">Infrastructure Homelab | Final Topology</text>
+<text x="70" y="88" class="subtitle" text-anchor="start">Deployed VMs and services · ESXi 8.0 Update 3 · October 2026</text>
 <rect x="1245" y="24" width="485" height="190" rx="16" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2" />
 <text x="1270" y="55" class="card-title" text-anchor="start">Legend</text>
 <line x1="1272" y1="84" x2="1352" y2="84" class="physical"/>
@@ -31,14 +31,14 @@ text { font-family: Inter, "Segoe UI", Arial, sans-serif; fill: #172033; }
 <text x="1375" y="202" class="small" text-anchor="start">VLAN 40 · OPS</text>
 <rect x="70" y="118" width="360" height="96" rx="16" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.3" />
 <text x="250" y="150" class="section" text-anchor="middle">Main PC</text>
-<text x="250" y="175" class="body" text-anchor="middle">ESXi Host Client · Sophos WebAdmin</text>
-<text x="250" y="197" class="small" text-anchor="middle">WebAdmin: 10.100.102.70:4444</text>
+<text x="250" y="175" class="body" text-anchor="middle">ESXi Host Client · SSH to Debian</text>
+<text x="250" y="197" class="small" text-anchor="middle">Sophos WebAdmin over the home LAN</text>
 <line x1="430" y1="166" x2="615" y2="166" class="virtual"/>
 <rect x="615" y="118" width="490" height="96" rx="16" fill="#f8fafc" stroke="#94a3b8" stroke-width="2.3" />
 <text x="860" y="151" class="section" text-anchor="middle">Home Network / Router</text>
 <text x="860" y="178" class="body" text-anchor="middle">10.100.102.0/24</text>
 <text x="860" y="199" class="small" text-anchor="middle">Default gateway: 10.100.102.1</text>
-<rect x="55" y="270" width="1690" height="940" rx="22" fill="#fbfcfe" stroke="#64748b" stroke-width="2.6" />
+<rect x="55" y="270" width="1690" height="955" rx="22" fill="#fbfcfe" stroke="#64748b" stroke-width="2.6" />
 <text x="92" y="305" class="host-title" text-anchor="start">ESXI01.denyslab.com</text>
 <text x="92" y="335" class="small" text-anchor="start">VMware ESXi 8.0 Update 3 · Core i3-10100 · 16 GB RAM</text>
 <line x1="860" y1="214" x2="860" y2="360" class="physical"/>
@@ -65,7 +65,7 @@ text { font-family: Inter, "Segoe UI", Arial, sans-serif; fill: #172033; }
 <text x="840" y="590" text-anchor="middle" class="pill" style="fill:#64748b">PortB · WAN · 10.100.102.70 (DHCP)</text>
 <rect x="245" y="610" width="900" height="170" rx="18" fill="#ffffff" stroke="#73a7df" stroke-width="2.6" />
 <text x="695" y="650" class="section" text-anchor="middle">SF01</text>
-<text x="695" y="677" class="body" text-anchor="middle">Sophos Firewall Home · permanent core firewall</text>
+<text x="695" y="677" class="body" text-anchor="middle">Sophos Firewall Home · lab gateway</text>
 <text x="695" y="704" class="small" text-anchor="middle">Zones · routing · SNAT · firewall rules · DHCP relay</text>
 <text x="695" y="730" class="small" text-anchor="middle">WebAdmin limited to ManagementPC (FW-ACCESS exception)</text>
 <rect x="1190" y="610" width="455" height="190" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
@@ -74,9 +74,9 @@ text { font-family: Inter, "Segoe UI", Arial, sans-serif; fill: #172033; }
 <text x="1215" y="694" class="body" text-anchor="start">Lab networks → internet: allow, SNAT via PortB</text>
 <text x="1215" y="716" class="body" text-anchor="start">CLIENTS, OPS → DC01: DNS</text>
 <text x="1215" y="738" class="body" text-anchor="start">CLIENTS → DC01: AD Services</text>
-<text x="1215" y="760" class="body" text-anchor="start">DHCP relay: PortC, PortD → 10.77.20.10</text>
-<text x="1215" y="782" class="small" text-anchor="start">Everything else: drop</text>
-<rect x="245" y="830" width="900" height="350" rx="18" fill="#ffffff" stroke="#73a7df" stroke-width="2.2" />
+<text x="1215" y="760" class="body" text-anchor="start">DHCP relay: PortC, PortD → DC01</text>
+<text x="1215" y="782" class="small" text-anchor="start">Unmatched forwarded traffic: drop</text>
+<rect x="245" y="830" width="900" height="375" rx="18" fill="#ffffff" stroke="#73a7df" stroke-width="2.2" />
 <text x="277" y="862" class="section" text-anchor="start">vSwitch-LAB</text>
 <text x="277" y="886" class="small" text-anchor="start">No physical uplink</text>
 <line x1="470" y1="780" x2="470" y2="905" class="virtual"/>
@@ -102,9 +102,9 @@ text { font-family: Inter, "Segoe UI", Arial, sans-serif; fill: #172033; }
 <line x1="740" y1="985" x2="740" y2="1030" class="virtual"/>
 <rect x="618" y="1030" width="245" height="126" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" />
 <text x="740" y="1060" class="card-title" text-anchor="middle">CLIENT-W11-01</text>
-<text x="740" y="1085" class="body" text-anchor="middle">Windows 11 domain client</text>
+<text x="740" y="1085" class="body" text-anchor="middle">Windows 11 · domain client</text>
 <text x="740" y="1108" class="body" text-anchor="middle">10.77.30.100 · DHCP</text>
-<text x="740" y="1132" class="small" text-anchor="middle">Joined to denyslab.com</text>
+<text x="740" y="1132" class="small" text-anchor="middle">Domain joined · used for tests</text>
 <line x1="1010" y1="780" x2="1010" y2="905" class="virtual"/>
 <rect x="905.0" y="790" width="210" height="30" rx="15" fill="#ffffff" stroke="#ea580c" stroke-width="2"/>
 <text x="1010" y="810" text-anchor="middle" class="pill" style="fill:#ea580c">PortD · 10.77.40.1</text>
@@ -113,9 +113,24 @@ text { font-family: Inter, "Segoe UI", Arial, sans-serif; fill: #172033; }
 <text x="1010" y="940" class="card-title" text-anchor="middle">OPS</text>
 <text x="1010" y="964" class="body" text-anchor="middle">VLAN 40 · 10.77.40.0/24</text>
 <line x1="1010" y1="985" x2="1010" y2="1030" class="virtual"/>
-<rect x="888" y="1030" width="245" height="126" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" />
+<rect x="888" y="1030" width="245" height="146" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" />
 <text x="1010" y="1060" class="card-title" text-anchor="middle">DEB12</text>
-<text x="1010" y="1085" class="body" text-anchor="middle">Debian 12 test host</text>
+<text x="1010" y="1085" class="body" text-anchor="middle">Debian 12 · Docker host</text>
 <text x="1010" y="1108" class="body" text-anchor="middle">10.77.40.10 · static</text>
-<text x="1010" y="1132" class="small" text-anchor="middle">Linux stage</text>
+<text x="1010" y="1132" class="small" text-anchor="middle">Zabbix Server · Web · PostgreSQL</text>
+
+<!-- Monitoring services and access paths (kept outside the vSwitch drawing for clarity) -->
+<rect x="1190" y="830" width="455" height="355" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
+<text x="1215" y="865" class="card-title" text-anchor="start">Services on DEB12</text>
+<text x="1215" y="895" class="body" text-anchor="start">Docker Engine + Compose</text>
+<text x="1215" y="921" class="body" text-anchor="start">PostgreSQL 16 · Zabbix 7.0 LTS</text>
+<text x="1215" y="947" class="body" text-anchor="start">Zabbix Agent 2 (Linux host)</text>
+<line x1="1215" y1="970" x2="1618" y2="970" stroke="#e2e8f0" stroke-width="2"/>
+<text x="1215" y="1002" class="card-title" text-anchor="start">Monitoring targets</text>
+<text x="1215" y="1031" class="body" text-anchor="start">DEB12 · local Linux agent</text>
+<text x="1215" y="1056" class="body" text-anchor="start">DC01 · Windows Zabbix agent</text>
+<text x="1215" y="1081" class="body" text-anchor="start">SF01 OPS gateway · ICMP</text>
+<line x1="1215" y1="1102" x2="1618" y2="1102" stroke="#e2e8f0" stroke-width="2"/>
+<text x="1215" y="1133" class="small" text-anchor="start">Web UI: SSH tunnel from the main PC</text>
+<text x="1215" y="1158" class="small" text-anchor="start">No extra VM for monitoring</text>
 </svg>

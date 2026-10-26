@@ -33,8 +33,8 @@ The screenshot below shows the host after the initial setup, with the hostname, 
 
 ## Resource limits
 
-With no VMs running, ESXi shows about 14 GB of memory free. I am not planning to allocate all of it to guests because the hypervisor and VM overhead still need headroom.
+With no VMs running, ESXi showed about 14 GB of free memory. I left some of that for the hypervisor and VM overhead rather than assigning it all to guests.
 
-The lab will use a small always-on footprint and temporary workloads instead of running every planned system at the same time.
+I don't keep all four VMs running at once. The Windows client is mainly powered on for tests.
 
 The ESXi network layout is documented separately in [2-esxi-networking.md](2-esxi-networking.md).

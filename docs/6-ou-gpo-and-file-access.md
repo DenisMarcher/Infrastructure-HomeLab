@@ -104,4 +104,4 @@ I opened `\\DC01\HR` in File Explorer under the HR account. In the same session,
 
 ## Next stage
 
-The next implemented stages are [Linux and Docker](7-linux-and-docker.md) and [Zabbix Monitoring](8-zabbix-monitoring.md). Backup and restore testing was postponed until after monitoring and remains a separate planned stage.
+I used the existing Debian VM for [Docker](7-linux-and-docker.md) and then added [Zabbix monitoring](8-zabbix-monitoring.md).

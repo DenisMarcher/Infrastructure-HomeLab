@@ -21,7 +21,7 @@ I needed a domain controller on the `SERVERS` network, with a static IP and DNS 
 
 `DC01` uses its own DNS service for domain lookups. The public DNS servers are configured as forwarders, not as alternate DNS servers on the network adapter. DNS Server and Global Catalog are enabled on the domain controller.
 
-`denyslab.com` is used as an internal Active Directory DNS zone in this lab. Ownership of the public DNS name has not been confirmed for this documentation update. For a new organizational deployment, I would choose an AD subdomain of a DNS domain the organization owns, such as `ad.<company-domain>`.
+I used `denyslab.com` for the internal AD DNS zone. I haven't verified ownership of the public domain, so I wouldn't use this exact naming approach for a company network.
 
 ## Implementation
 

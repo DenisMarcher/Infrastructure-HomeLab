@@ -8,9 +8,7 @@ ESXi management needs to stay reachable even if the firewall VM is down. The lab
 
 Host management stays on `vSwitch0`, outside the virtual firewall. The internal lab networks share a separate vSwitch with no physical uplink.
 
-The diagram below is the initial network design from before the firewall VM was deployed. The [README](../README.md) contains the current topology with the deployed VMs.
-
-![Initial ESXi network design](../diagrams/2-esxi-network-layout.svg)
+The [final topology](../diagrams/lab-topology.svg) shows the vSwitches, deployed VMs, and services together.
 
 `vSwitch0` is connected to the home LAN through `vmnic0`. ESXi management remains on this switch through `vmk0` at `10.100.102.69`.
 
@@ -22,7 +20,7 @@ The default `VM Network` port group is now used by `SF01` for its WAN interface.
 | --- | ---: | --- | --- | --- |
 | `SERVERS` | 20 | `10.77.20.0/24` | `10.77.20.1` | Infrastructure servers |
 | `CLIENTS` | 30 | `10.77.30.0/24` | `10.77.30.1` | Client systems |
-| `OPS` | 40 | `10.77.40.0/24` | `10.77.40.1` | Monitoring, backup, and administration |
+| `OPS` | 40 | `10.77.40.0/24` | `10.77.40.1` | Linux, Docker, monitoring, and administration |
 
 The gateway addresses are configured on Sophos Firewall interfaces. ESXi does not have a VMkernel interface on `vSwitch-LAB`.
 
