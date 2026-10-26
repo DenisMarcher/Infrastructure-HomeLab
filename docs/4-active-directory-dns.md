@@ -21,7 +21,7 @@ I needed a domain controller on the `SERVERS` network, with a static IP and DNS 
 
 `DC01` uses its own DNS service for domain lookups. The public DNS servers are configured as forwarders, not as alternate DNS servers on the network adapter. DNS Server and Global Catalog are enabled on the domain controller.
 
-I used `denyslab.com` for the internal AD DNS zone. I haven't verified ownership of the public domain, so I wouldn't use this exact naming approach for a company network.
+`denyslab.com` is the internal AD DNS zone. Public-domain ownership was not verified as part of this lab.
 
 ## Implementation
 
@@ -72,8 +72,8 @@ I also checked `net share` and found both `SYSVOL` and `NETLOGON`.
 
 ### Warnings after promotion
 
-A separate `dcdiag /q` run reported `DFSREvent` and `SystemLog` entries. I have not confirmed the full details of the related Event Viewer entries for this documentation update. DNS resolution, the later DHCP tests, domain join, and sign-in were validated in subsequent stages. The diagnostic warnings still need a separate review; successful client tests do not prove that all warnings can be ignored.
+`dcdiag /q` reported `DFSREvent` and `SystemLog` warnings. Their root cause was not traced in Event Viewer. The later DNS, DHCP, domain-join, and sign-in checks passed.
 
 ## Next stage
 
-Windows DHCP, Sophos DHCP relay, and Windows client domain join are covered in [DHCP and Windows Client](5-dhcp-and-windows-client.md).
+[DHCP and Windows Client](5-dhcp-and-windows-client.md) covers DHCP scopes, relay, DNS access, and domain join.

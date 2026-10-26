@@ -16,7 +16,7 @@ The default `VM Network` port group is now used by `SF01` for its WAN interface.
 
 `vSwitch-LAB` has no physical uplink. It carries the three internal lab port groups:
 
-| Port group | VLAN | Subnet | Gateway | Intended use |
+| Port group | VLAN | Subnet | Gateway | Use |
 | --- | ---: | --- | --- | --- |
 | `SERVERS` | 20 | `10.77.20.0/24` | `10.77.20.1` | Infrastructure servers |
 | `CLIENTS` | 30 | `10.77.30.0/24` | `10.77.30.1` | Client systems |
@@ -36,10 +36,10 @@ Port groups with the same VLAN ID on a vSwitch would share one broadcast domain.
 
 ## Validation
 
-<p align="center">
-  <img src="../screenshots/2-esxi-vswitch-lab-proof.png" alt="vSwitch-LAB configuration in ESXi Host Client" width="100%">
-</p>
+![vSwitch-LAB port groups and uplink settings](../screenshots/2-esxi-vswitch-lab-proof.png)
 
 *ESXi Host Client showing the three lab port groups on `vSwitch-LAB` and no physical adapter attached.*
 
-The firewall deployment and policy validation are documented in [3-sophos-firewall.md](3-sophos-firewall.md).
+## Next stage
+
+[Sophos Firewall](3-sophos-firewall.md) covers routing, NAT, firewall rules, and connectivity tests.

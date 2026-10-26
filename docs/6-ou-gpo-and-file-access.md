@@ -8,9 +8,7 @@ Finance and HR needed separate shared folders. I wanted folder permissions assig
 
 ## Design
 
-The domain has `Finance`, `HR`, `IT`, and `Workstations` OUs. I used `DC01` for the file shares because this lab runs on an ESXi host with 16 GB of RAM.
-
-The computer object for `CLIENT-W11-01` was shown in the default `Computers` container after domain join. I have not checked whether it has since been moved into the `Workstations` OU.
+The domain has `Finance`, `HR`, `IT`, and `Workstations` OUs. The Finance and HR file shares run on `DC01`.
 
 For Finance, group membership and file permissions are kept separate:
 
@@ -18,9 +16,9 @@ For Finance, group membership and file permissions are kept separate:
 
 `Finance_Hosts_Global` contains the user; `Finance_Local` has Modify permission on the folder. This follows AGDLP (Account → Global group → Domain Local group → Permission).
 
-The HR folder uses a different domain-local group, `HR_Local`, for the same NTFS permission level. The complete membership path through any HR global group has not been rechecked for this update.
+The HR folder uses a separate domain-local group, `HR_Local`, with Modify permission.
 
-The `_Hosts_` part of the Finance global group name is misleading because the group contains users. In a new design I would use a name such as `GG_Finance_Users` rather than rename the existing group and disrupt the documented tests.
+Despite its name, `Finance_Hosts_Global` contains users, not computer accounts.
 
 The folders are stored at `C:\SharedFolders\Finance` and `C:\SharedFolders\HR`. They are shared as `\\DC01\Finance` and `\\DC01\HR`.
 
@@ -44,15 +42,15 @@ On `DC01`, I configured separate NTFS permissions for the Finance and HR folders
 
 *Separate NTFS permissions for `Finance` and `HR`.*
 
-The share-level permissions are not included in the current screenshot evidence and need a separate review. The NTFS and access tests below are documented independently of that check.
+The screenshots show NTFS permissions and user access tests, not the share-level ACLs.
 
 ### Group Policy
 
-`User_ScreenLock` enables the screen saver, selects `scrnsave.scr`, requires a password when resuming, and sets the timeout to **1200 seconds (20 minutes)**. The exact file name in the existing screenshot should be checked against the live setting before revising the evidence.
+`User_ScreenLock` enables the screen saver, requires a password on resume, and sets a **1200-second (20-minute)** timeout.
 
 ![Screen saver policy settings](../screenshots/6-gpo-screenlock-settings.png)
 
-*Settings in the `User_ScreenLock` GPO; the screen saver file name is pending a closer screenshot check.*
+*Screen saver and password-on-resume settings in `User_ScreenLock`.*
 
 `Finance-DriveMap` maps `\\DC01\Finance` to drive `F:`. The action is `Update`, `Reconnect` is enabled, and item-level targeting checks membership in `DENYSLAB\Finance_Hosts_Global`.
 
@@ -96,12 +94,10 @@ I opened `\\DC01\HR` in File Explorer under the HR account. In the same session,
 
 *The HR share opened; the Finance share returned `Access is denied`.*
 
-## Known Limitations
+## Scope of checks
 
-- The shares are hosted on the domain controller because the lab has only 16 GB of RAM. I would separate file services from a domain controller in a larger deployment.
-- Windows Server is an evaluation build; its remaining evaluation period should be checked on the current VM before recording a number.
-- The share permissions, HR global-group nesting, and current placement of the workstation computer object need direct checks before adding more detailed claims.
+The screenshots cover NTFS permissions, GPO application, and file access under Finance and HR accounts. They do not cover share-level ACLs or the complete HR group chain. The last captured computer-object location was the default `Computers` container. Windows Server is an evaluation build.
 
 ## Next stage
 
-I used the existing Debian VM for [Docker](7-linux-and-docker.md) and then added [Zabbix monitoring](8-zabbix-monitoring.md).
+[Linux and Docker](7-linux-and-docker.md) covers Debian administration, storage, and containers.

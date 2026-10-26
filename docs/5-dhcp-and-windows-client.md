@@ -52,7 +52,7 @@ Both rules target `DC01` rather than the full `SERVERS` subnet. The DNS rule als
 
 I created the `AD Services` service object with TCP 88, 389, 445, 135, 464, and 49152–65535, plus UDP 88, 389, 464, and 123. DNS uses the separate rule on TCP/UDP 53. The AD rule does not require a known Sophos user because the workstation needs to reach the domain controller before sign-in.
 
-The `AD Services` object does not include TCP 3268 (Global Catalog) or TCP 636 (LDAPS). Domain join and sign-in worked without those ports in this test. I will review access rules if a later service requires them.
+The `AD Services` object does not include TCP 3268 (Global Catalog) or TCP 636 (LDAPS). Domain join and sign-in worked with the ports shown.
 
 ![AD Services port settings](../screenshots/5-ad-services-ports.png)
 
@@ -86,4 +86,4 @@ After switching the client to DHCP, it received the expected IP settings but cou
 
 ## Next stage
 
-OU structure, security groups, GPOs, and shared folder permissions are covered in [OUs, Group Policy, and File Access](6-ou-gpo-and-file-access.md).
+[OUs, Group Policy, and File Access](6-ou-gpo-and-file-access.md) covers department groups, user policies, and share access.

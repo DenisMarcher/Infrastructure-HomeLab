@@ -1,6 +1,6 @@
 # Sophos Firewall Core
 
-I deployed Sophos Firewall Home as the permanent firewall for the lab. This stage established routing, internet access, NAT, and a restrictive policy baseline before adding Active Directory or other infrastructure services.
+I deployed Sophos Firewall Home to route traffic between the three lab networks and control access to the home network and internet.
 
 ## Requirement
 
@@ -12,7 +12,7 @@ For this stage I needed the firewall to:
 - keep ESXi management independent from the firewall VM
 - allow WebAdmin access from my main PC without exposing it to the whole WAN zone
 
-I did not add general inter-zone allow rules at this point. Those rules will be added later only when a service needs them.
+The initial policy had no general inter-zone allow rules. I added service-specific rules later for [AD and DNS](5-dhcp-and-windows-client.md) and [Zabbix](8-zabbix-monitoring.md).
 
 ## Design
 
@@ -29,11 +29,7 @@ VLAN tagging is handled by ESXi on the port groups (VLAN IDs 20, 30, and 40; see
 - 80 GB auxiliary disk
 - 4 virtual NICs
 
-I kept the firewall at 1 vCPU and 4 GB RAM for this lab. I have not verified that the ESXi license limits it to one vCPU; that needs to be checked before documenting a licensing restriction.
-
-<p align="center">
-  <img src="../screenshots/3-sophos-vm-hardware.png" alt="SF01 virtual machine resources and four ESXi network adapters" width="85%">
-</p>
+![SF01 virtual machine resources and four ESXi network adapters](../screenshots/3-sophos-vm-hardware.png)
 
 *SF01 VM resources and ESXi network assignments.*
 
@@ -46,15 +42,11 @@ I kept the firewall at 1 vCPU and 4 GB RAM for this lab. I have not verified tha
 | `PortC` | `CLIENTS` | `CLIENTS` | 30 | `10.77.30.1/24` | Client network gateway |
 | `PortD` | `OPS` | `OPS` | 40 | `10.77.40.1/24` | Operations network gateway |
 
-<p align="center">
-  <img src="../screenshots/3-sophos-interfaces.png" alt="Final Sophos interface assignments and IP addresses for PortA through PortD" width="100%">
-</p>
+![Final Sophos interface assignments and IP addresses for PortA through PortD](../screenshots/3-sophos-interfaces.png)
 
 *Final interface assignments: `PortA/SERVERS`, `PortB/WAN`, `PortC/CLIENTS`, and `PortD/OPS`.*
 
-<p align="center">
-  <img src="../screenshots/3-sophos-zones.png" alt="Sophos zones showing WAN, SERVERS, CLIENTS, and OPS membership and device access" width="100%">
-</p>
+![Sophos zones showing WAN, SERVERS, CLIENTS, and OPS membership and device access](../screenshots/3-sophos-zones.png)
 
 *Final zone membership and device-access settings for the lab interfaces.*
 
@@ -77,11 +69,9 @@ I placed the lab-to-home deny rule above the internet rules so traffic for `10.1
 
 Logging is enabled on these rules. I disabled the automatically added MTA rule and the original `#Default_Network_Policy`. Unmatched traffic still falls to the built-in final `Drop all` rule.
 
-<p align="center">
-  <img src="../screenshots/3-sophos-firewall-rules.png" alt="Sophos firewall rule order with lab-to-home deny and separate internet rules" width="100%">
-</p>
+![Sophos firewall rule order with lab-to-home deny and separate internet rules](../screenshots/3-sophos-firewall-rules.png)
 
-*Final rule order for the baseline.*
+*Firewall rules before the later service-specific exceptions.*
 
 No rule currently permits general traffic between `SERVERS`, `CLIENTS`, and `OPS`.
 
@@ -89,9 +79,7 @@ No rule currently permits general traffic between `SERVERS`, `CLIENTS`, and `OPS
 
 Outbound lab traffic uses `Default SNAT IPv4`. The source address is masqueraded and traffic leaves through `PortB`.
 
-<p align="center">
-  <img src="../screenshots/3-sophos-nat-rules.png" alt="Sophos NAT rules showing Default SNAT IPv4 using MASQ through PortB" width="100%">
-</p>
+![Sophos NAT rules showing Default SNAT IPv4 using MASQ through PortB](../screenshots/3-sophos-nat-rules.png)
 
 *`Default SNAT IPv4` provides outbound masquerading through `PortB`.*
 
@@ -103,9 +91,7 @@ I administer WebAdmin from my main PC at `10.100.102.70:4444`. Because `PortB` b
 
 Device access on the internal zones is also kept narrow. The final zone configuration allows `Ping/Ping6` on `SERVERS` and `CLIENTS`; `OPS` allows HTTPS and `Ping/Ping6`. The `FW-ACCESS` exception permits HTTPS and `Ping/Ping6` from `ManagementPC` in the `WAN` zone.
 
-<p align="center">
-  <img src="../screenshots/3-sophos-device-access-acl.png" alt="Sophos Device Access settings and the FW-ACCESS local service ACL exception" width="100%">
-</p>
+![Sophos Device Access settings and the FW-ACCESS local service ACL exception](../screenshots/3-sophos-device-access-acl.png)
 
 *Local firewall access is limited by zone-level Device Access settings and the `FW-ACCESS` exception for the management PC.*
 
@@ -121,21 +107,15 @@ I tested the baseline with one system in each internal network. Public DNS was u
 
 ### Endpoint checks
 
-<p align="center">
-  <img src="../screenshots/3-server-validation.png" alt="Windows Server connectivity checks from the SERVERS network" width="75%">
-</p>
+![Windows Server connectivity checks from the SERVERS network](../screenshots/3-server-validation.png)
 
 *`SERVERS`: internet and DNS checks pass; the home-router ping receives no reply.*
 
-<p align="center">
-  <img src="../screenshots/3-client-validation.png" alt="Windows 11 connectivity checks from the CLIENTS network" width="80%">
-</p>
+![Windows 11 connectivity checks from the CLIENTS network](../screenshots/3-client-validation.png)
 
 *`CLIENTS`: the client has the expected address and gateway and can reach the internet.*
 
-<p align="center">
-  <img src="../screenshots/3-ops-validation.png" alt="Debian 12 connectivity checks from the OPS network" width="90%">
-</p>
+![Debian 12 connectivity checks from the OPS network](../screenshots/3-ops-validation.png)
 
 *`OPS`: internet and DNS checks pass; home-LAN and cross-zone pings receive no reply.*
 
@@ -143,19 +123,15 @@ I tested the baseline with one system in each internal network. Public DNS was u
 
 The firewall log provides the policy evidence. It shows internet traffic from the lab allowed by the matching zone rule with `Default SNAT IPv4` applied, and traffic from all three networks to `10.100.102.1` denied by `LAB_TO_HOME_DENY`. I captured the updated log after `CLIENT-W11-01` had moved to DHCP and `SERVERS` was running `DC01`. The source addresses shown are `10.77.20.10`, `10.77.30.100`, and `10.77.40.10`.
 
-<p align="center">
-  <img src="../screenshots/3-sophos-traffic-log.png?v=575c4ee" alt="Sophos Log Viewer showing allowed SNAT traffic and denied traffic from all three lab networks to the home gateway" width="100%">
-</p>
+![Sophos Log Viewer showing allowed SNAT traffic and denied traffic from all three lab networks to the home gateway](../screenshots/3-sophos-traffic-log.png?v=575c4ee)
 
 *Allowed internet traffic with SNAT and denied lab-to-home traffic in the same log view.*
 
-I also ran cross-zone ICMP checks from the test systems. Those pings timed out, but I did not capture a matching final-drop log entry. I therefore treat them as endpoint reachability checks, not as proof that the Sophos `Drop all` rule was the component that discarded ICMP.
+Cross-zone ICMP checks also timed out. No matching final-drop log entry was captured, so these checks establish reachability, not which rule handled the packets.
 
 ### Configuration backup
 
-After validation, I exported the Sophos configuration and saved the copy on my main PC, outside the ESXi datastore and outside this repository.
-
-I have not performed a restore test yet. The export is therefore a saved configuration copy, not a verified recovery procedure.
+I exported the Sophos configuration to my main PC, outside the ESXi datastore. The export was not restore-tested.
 
 ## Troubleshooting
 
@@ -170,3 +146,6 @@ The cause was that ICMP to the firewall itself was not enabled for the `SERVERS`
 The Windows 11 client could ping `8.8.8.8`, but hostname lookups and browser access failed with `DNS_PROBE_FINISHED_BAD_CONFIG`. The successful IP test showed that the client gateway, firewall rule, SNAT, and WAN path were working.
 
 I configured `8.8.8.8` and `1.1.1.1` as temporary DNS servers and repeated the test. Name resolution then worked. These public resolvers were only a temporary validation setting; the domain design now uses `DC01` for DNS.
+## Next stage
+
+[Active Directory and DNS](4-active-directory-dns.md) covers the next part of the lab.

@@ -1,10 +1,10 @@
 # Zabbix Monitoring
 
-I set up Zabbix on `DEB12` so I could check the Linux host, the Windows domain controller, and Sophos from one place. I ran it in Docker alongside the other Debian services rather than creating another VM.
+I ran Zabbix in Docker on `DEB12` to monitor the Debian host, Windows domain controller, and Sophos firewall.
 
 ## Requirement
 
-I wanted to see whether the lab systems were reachable and collect basic Windows and Linux metrics. For Sophos, an ICMP check was enough to start with.
+I needed host availability checks and basic Linux and Windows metrics. Sophos is checked by ICMP.
 
 ## Design
 
@@ -76,7 +76,17 @@ After correcting the Sophos address, I checked its ICMP values again: **Up (1)**
 
 *ICMP results from the Sophos OPS interface.*
 
-I also checked the Docker containers and memory use. PostgreSQL and the web container reported healthy, and Zabbix Server was running. At that moment PostgreSQL used about **100 MiB**, the web container **91 MiB**, and Zabbix Server **59 MiB**. Debian had about **1.2 GiB of available RAM**, with **918 MiB** used on the 12 GB Docker filesystem.
+I checked container status, memory, and disk space on `DEB12`:
+
+```bash
+cd /home/denis/zabbix
+docker compose ps
+docker stats --no-stream
+free -h
+df -h / /var /var/lib/docker
+```
+
+PostgreSQL and the web container reported healthy, and Zabbix Server was running. PostgreSQL used about **100 MiB**, the web container **91 MiB**, and Zabbix Server **59 MiB**. Debian had about **1.2 GiB of available RAM**; the 12 GB Docker filesystem held **918 MiB** of data.
 
 ![Zabbix container status and memory](../screenshots/8-zabbix-containers-resources.png)
 
@@ -102,8 +112,10 @@ The original Zabbix host entry used `127.0.0.1:10050`, which pointed inside the 
 
 The first Sophos host entry used `10.77.20.10` by mistake. I changed it to `10.77.40.1` and checked the ICMP values again.
 
-## Follow-up
+## Scope of checks
 
-I still need to check the **29 items without readings** and test alert delivery. The `ZABBIX_TO_DC01` rule shows a `TCP` service in Sophos; I need to confirm it is limited to TCP 10050.
+The combined Latest data screenshot showed **29 items without readings**. Alert delivery and database restore were not tested. The `ZABBIX_TO_DC01` firewall rule displayed a `TCP` service; its exact port scope was not verified. The initial Zabbix administrator password was unchanged at the last check, while web access was limited to an SSH tunnel.
 
-I left the initial Zabbix administrator password unchanged. The web interface is only exposed through the SSH tunnel, but the password should be changed before giving the interface wider access. Backup and restore testing is planned separately.
+## Project overview
+
+[Back to the Infrastructure Homelab overview](../README.md).

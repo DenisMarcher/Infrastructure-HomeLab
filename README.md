@@ -1,6 +1,6 @@
 # Infrastructure Homelab
 
-I built this lab on one VMware ESXi host to practice network segmentation, Windows domain services, Docker, and monitoring. With 16 GB of RAM, I don't keep every VM running at the same time. The Windows client is mainly used for tests.
+I built this lab on one VMware ESXi host to practice network segmentation, Windows domain services, Docker, and monitoring. The host has 16 GB of RAM, and I power on the Windows client for tests.
 
 ![Final lab topology](diagrams/lab-topology.svg)
 
@@ -40,10 +40,10 @@ I wrote up each part after setting it up and checking that it worked:
 
 The screenshots and troubleshooting details are in the linked notes.
 
-## Things to keep in mind
+## Scope and open checks
 
-This is a single-host lab, not a fault-tolerant setup. File shares run on `DC01` to save memory. A Sophos configuration export was saved outside ESXi, but I haven't tested a complete backup and restore.
-
-At the last check, Debian's 2.2 GB root filesystem was 91% full. Zabbix's initial admin password had not been changed, and a few firewall-rule scopes still needed tightening. These are documented in the relevant stages rather than presented as finished work.
-
-Windows Server runs as an evaluation build. I use `denyslab.com` internally for Active Directory; ownership of the public DNS name has not been established in this documentation.
+- One ESXi host, one domain controller, and Windows file shares on `DC01`. There is no redundancy.
+- A Sophos configuration export is stored off-host. Full system and data restore tests were not performed.
+- The last Debian check showed 91% usage on the 2.2 GB root filesystem.
+- The initial Zabbix admin password was unchanged at the last check. Some firewall-rule scopes and Zabbix alert delivery remain unverified.
+- Windows Server is an evaluation build. `denyslab.com` is an internal AD DNS zone; ownership of the public domain was not verified.
