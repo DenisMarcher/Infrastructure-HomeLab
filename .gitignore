@@ -1,0 +1,4 @@
+# Do not commit local credentials or Compose environment files.
+.env
+.env.*
+!.env.example

@@ -16,7 +16,22 @@ Zabbix runs on `DEB12` (`10.77.40.10`, `OPS` network) with three Compose service
 | `zabbix-server` | `zabbix/zabbix-server-pgsql:alpine-7.0-latest` | Zabbix Server |
 | `web` | `zabbix/zabbix-web-nginx-pgsql:alpine-7.0-latest` | Web interface |
 
-I kept the Compose files in `/home/denis/zabbix` and the PostgreSQL data in a Docker volume. The database password is in a local `.env` file, not in GitHub.
+I kept the Compose files in `/home/denis/zabbix` and PostgreSQL data in a Docker volume. The database password stays in a local `.env` file.
+
+### Compose configuration
+
+I added a [sanitized Compose example](../configs/zabbix/compose.yaml) and an [environment template](../configs/zabbix/.env.example) to the repository. The example matches the three services, image tags, PostgreSQL connection limit, persistent database storage, and loopback web binding documented here. It is a reconstruction from the recorded setup, not a byte-for-byte export of the live file on `DEB12`.
+
+To check the example without starting containers:
+
+```bash
+cd configs/zabbix
+cp .env.example .env
+# Set POSTGRES_PASSWORD in .env to a unique value.
+docker compose config --quiet
+```
+
+The example does not contain passwords. I would compare it with `/home/denis/zabbix/compose.yaml` before applying it to the running lab.
 
 The web container listens on `127.0.0.1:8080` on Debian. I reach it from my Windows PC through an SSH tunnel:
 
