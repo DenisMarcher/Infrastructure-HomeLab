@@ -11,8 +11,6 @@ I installed VMware ESXi 8.0 Update 3 on a dedicated PC that runs the infrastruct
 
 The machine was originally planned with 32 GB of RAM, but one motherboard RAM slot is not working. I decided to continue with the current hardware and keep the VM footprint small instead of delaying the lab for an upgrade.
 
-I may add another 256 GB SSD later if I need more room for temporary VMs and vendor firewall labs.
-
 ## ESXi
 
 Installed version:
