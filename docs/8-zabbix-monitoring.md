@@ -113,7 +113,7 @@ PostgreSQL and the web container reported healthy, and Zabbix Server was running
 
 The web page initially showed `Error connecting to database`. PostgreSQL logs said `FATAL: sorry, too many clients already`, and Zabbix Server was repeatedly trying to reconnect.
 
-I had set `max_connections=30` in the PostgreSQL Compose settings. I increased it to **100** and applied the change without deleting the database volume. The web interface then loaded, and host data started appearing.
+At the first startup, PostgreSQL was using `max_connections=30`. It ran out of available connections, but I did not establish what consumed them. I increased the limit to **100** and applied the change without deleting the database volume. The web interface then loaded, and host data started appearing.
 
 ![Database connection error](../screenshots/8-zabbix-postgres-error.png)
 
@@ -129,7 +129,7 @@ The first Sophos host entry used `10.77.20.10` by mistake. I changed it to `10.7
 
 ## Scope of checks
 
-The combined Latest data screenshot showed **29 items without readings**. Alert delivery and database restore were not tested. The `ZABBIX_TO_DC01` firewall rule displayed a `TCP` service; its exact port scope was not verified. The initial Zabbix administrator password was unchanged at the last check, while web access was limited to an SSH tunnel.
+The combined Latest data screenshot showed **29 items without readings**. Alert delivery and database restore were not tested. The `ZABBIX_TO_DC01` firewall rule displayed a `TCP` service; its exact port scope was not verified. The Zabbix administrator password has since been changed; web access remains limited to an SSH tunnel.
 
 ## Project overview
 
