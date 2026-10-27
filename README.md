@@ -45,5 +45,5 @@ The screenshots and troubleshooting details are in the linked notes.
 - One ESXi host, one domain controller, and Windows file shares on `DC01`. There is no redundancy.
 - A Sophos configuration export is stored off-host. Full system and data restore tests were not performed.
 - The last Debian check showed 91% usage on the 2.2 GB root filesystem.
-- The initial Zabbix admin password was unchanged at the last check. Some firewall-rule scopes and Zabbix alert delivery remain unverified.
+- The Zabbix administrator password has since been changed. Some firewall-rule scopes and Zabbix alert delivery remain unverified.
 - Windows Server is an evaluation build. `denyslab.com` is an internal AD DNS zone; ownership of the public domain was not verified.
