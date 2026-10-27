@@ -18,6 +18,21 @@ I built this lab on one VMware ESXi host to practice network segmentation, Windo
 | `CLIENT-W11-01` | CLIENTS / VLAN 30 | `10.77.30.100` (DHCP at last check) | Windows 11 domain client |
 | `DEB12` | OPS / VLAN 40 | `10.77.40.10` (static) | Debian 12, Docker, PostgreSQL, Zabbix Server/Web, Zabbix Agent 2 |
 
+
+## VM memory allocation
+
+The ESXi host has 16 GB of physical RAM. I configured the VMs with the following memory amounts:
+
+| VM | Configured RAM |
+| --- | ---: |
+| `SF01` (Sophos Firewall) | 4 GB |
+| `SRV-DC01` (Windows Server 2022) | 4 GB |
+| `DEB12` (Debian 12) | 2 GB |
+| `CLIENT-W11-01` (Windows 11) | 3 GB |
+| **Total across all four VMs** | **13 GB** |
+
+The 13 GB total is the sum of configured VM memory, not measured host usage or a fixed amount left over for ESXi. I only power on the Windows 11 client for domain and GPO tests to leave more headroom for ESXi and the core services. Zabbix runs in Docker on `DEB12` instead of a separate VM.
+
 ## Build notes
 
 I wrote up each part after setting it up and checking that it worked:
