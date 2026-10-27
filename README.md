@@ -35,7 +35,7 @@ I wrote up each part after setting it up and checking that it worked:
 
 - Checked internet access and lab-to-home blocking in the Sophos firewall log.
 - Joined the Windows 11 client to `denyslab.com`, checked DHCP/DNS, applied GPOs, and tested Finance and HR file access.
-- Ran a Docker test container, then started the Zabbix stack with Compose. A [sanitized Compose example](configs/zabbix/compose.yaml) is included.
+- Ran a Docker test container, then started the Zabbix stack with Compose. A [Compose example](configs/zabbix/compose.yaml) is included.
 - Collected Linux and Windows metrics in Zabbix and checked the Sophos OPS interface by ICMP.
 
 The screenshots and troubleshooting details are in the linked notes.
